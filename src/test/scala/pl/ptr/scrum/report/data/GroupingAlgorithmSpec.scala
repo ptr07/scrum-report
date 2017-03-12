@@ -25,7 +25,7 @@ class GroupingAlgorithmSpec extends FlatSpec with Matchers {
   val groupingAlgorithm = new GroupingAlgorithm
 
   "An example task list " should "be grouped by status and have valid number of hours" in {
-    val tasks = List(Task("Bug".typeName, "1", "P1", "To Do".statusName, 3600, 2400), Task("Bug".typeName, "2", "P2", "To Do".statusName, 7200, 2400), Task("Bug".typeName, "3", "P1", "Closed".statusName, 8000, 3400))
+    val tasks = List(Task("Bug".typeName, "1", "P1".projectName, "To Do".statusName, 3600, 2400), Task("Bug".typeName, "2", "P2".projectName, "To Do".statusName, 7200, 2400), Task("Bug".typeName, "3", "P1".projectName, "Closed".statusName, 8000, 3400))
 
 
     val map = groupingAlgorithm.groupAndCountByStatus(tasks)
@@ -36,7 +36,7 @@ class GroupingAlgorithmSpec extends FlatSpec with Matchers {
   }
 
   "it" should "not round incomplete hours " in {
-    val tasks = List(Task("Bug".typeName, "1", "P1", "To Do".statusName, 1700, 2400), Task("Bug".typeName, "1", "P1", "Developed".statusName, 1900, 2400))
+    val tasks = List(Task("Bug".typeName, "1", "P1".projectName, "To Do".statusName, 1700, 2400), Task("Bug".typeName, "1", "P1".projectName, "Developed".statusName, 1900, 2400))
     val map = groupingAlgorithm.groupAndCountByStatus(tasks)
     map should have size (2)
     map should contain key "To Do".statusName
@@ -48,7 +48,7 @@ class GroupingAlgorithmSpec extends FlatSpec with Matchers {
   }
 
   "it" should "subtract not finished buffer tasks from 'to do' and add it to 'done'" in {
-    val tasks = List(Task("Bug".typeName, "bufor", "P1", "To Do".statusName, 3600, 3600), Task("Bug".typeName, "bufor", "P1", "Business done".statusName, 7200, 3600))
+    val tasks = List(Task("Bug".typeName, "bufor", "P1".projectName, "To Do".statusName, 3600, 3600), Task("Bug".typeName, "bufor", "P1".projectName, "Business done".statusName, 7200, 3600))
 
     val map = groupingAlgorithm.groupAndCountByStatus(tasks)
     map should have size (2)
@@ -62,7 +62,7 @@ class GroupingAlgorithmSpec extends FlatSpec with Matchers {
 
 
   "it" should "not accepted exceeded buffers" in {
-    val tasks = List(Task("Bug".typeName, "bufor", "P1", "To Do".statusName, 3600, 7200))
+    val tasks = List(Task("Bug".typeName, "bufor", "P1".projectName, "To Do".statusName, 3600, 7200))
 
     val map = groupingAlgorithm.groupAndCountByStatus(tasks)
     map should have size (2)
@@ -85,10 +85,10 @@ class GroupingAlgorithmSpec extends FlatSpec with Matchers {
 
   "An example task list " should "be grouped by task type and have valid number of hours" in {
     val tasks = List(
-      Task("Bug".typeName, "1", "P1", "To Do".statusName, 3600, 2400),
-      Task("Bug".typeName, "2", "P2", "To Do".statusName, 7200, 2400),
-      Task("Change Request".typeName, "3", "P1", "Closed".statusName, 8000, 3400),
-      Task("Story".typeName, "4", "P3", "Closed".statusName, 7200, 3400))
+      Task("Bug".typeName, "1", "P1".projectName, "To Do".statusName, 3600, 2400),
+      Task("Bug".typeName, "2", "P2".projectName, "To Do".statusName, 7200, 2400),
+      Task("Change Request".typeName, "3", "P1".projectName, "Closed".statusName, 8000, 3400),
+      Task("Story".typeName, "4", "P3".projectName, "Closed".statusName, 7200, 3400))
 
 
     val map = groupingAlgorithm.groupAndCountByType(tasks)
@@ -105,7 +105,7 @@ class GroupingAlgorithmSpec extends FlatSpec with Matchers {
   }
 
   "it" should "not round hours " in {
-    val tasks = List(Task("Bug".typeName, "1", "P1", "To Do".statusName, 1250, 2400), Task("Bug".typeName, "2", "P2", "To Do".statusName, 1250, 2400))
+    val tasks = List(Task("Bug".typeName, "1", "P1".projectName, "To Do".statusName, 1250, 2400), Task("Bug".typeName, "2", "P2".projectName, "To Do".statusName, 1250, 2400))
 
     val map = groupingAlgorithm.groupAndCountByType(tasks)
     map should have size (1)
@@ -127,19 +127,19 @@ class GroupingAlgorithmSpec extends FlatSpec with Matchers {
 
   "An example task list " should "be grouped by project and than by task type and have valid number of hours" in {
     val tasks = List(
-      Task("Bug".typeName, "1", "A", "To Do".statusName, 3600, 2400),
-      Task("Bug".typeName, "1", "A", "To Do".statusName, 7200, 2400),
-      Task("Bug".typeName, "2", "B", "To Do".statusName, 7200, 2400),
-      Task("Change Request".typeName, "3", "A", "Closed".statusName, 8000, 3400),
-      Task("Story".typeName, "4", "A", "Closed".statusName, 7200, 3400))
+      Task("Bug".typeName, "1", "A".projectName, "To Do".statusName, 3600, 2400),
+      Task("Bug".typeName, "1", "A".projectName, "To Do".statusName, 7200, 2400),
+      Task("Bug".typeName, "2", "B".projectName, "To Do".statusName, 7200, 2400),
+      Task("Change Request".typeName, "3", "A".projectName, "Closed".statusName, 8000, 3400),
+      Task("Story".typeName, "4", "A".projectName, "Closed".statusName, 7200, 3400))
 
 
     val map = groupingAlgorithm.groupAndCountByProjectAndType(tasks)
     map should have size (2)
-    map should contain key "A"
-    map should contain key "B"
+    map should contain key "A".projectName
+    map should contain key "B".projectName
 
-    val a = map.get("A").get
+    val a = map.get("A".projectName).get
 
     a should contain key "Bug".typeName
     a.get("Bug".typeName) should be(Some(3.0))
@@ -150,7 +150,7 @@ class GroupingAlgorithmSpec extends FlatSpec with Matchers {
     a should contain key "Story".typeName
     a.get("Story".typeName) should be(Some(2.0))
 
-    val b = map.get("B").get
+    val b = map.get("B".projectName).get
 
     b should contain key "Bug".typeName
     b.get("Bug".typeName) should be(Some(2.0))
@@ -171,13 +171,13 @@ class GroupingAlgorithmSpec extends FlatSpec with Matchers {
   }
 
   "it" should "not round hours after grouping " in {
-    val tasks = List(Task("Bug".typeName, "1", "P", "To Do".statusName, 1250, 2400), Task("Bug".typeName, "2", "P", "To Do".statusName, 1250, 2400))
+    val tasks = List(Task("Bug".typeName, "1", "P".projectName, "To Do".statusName, 1250, 2400), Task("Bug".typeName, "2", "P".projectName, "To Do".statusName, 1250, 2400))
 
     val map = groupingAlgorithm.groupAndCountByProjectAndType(tasks)
     map should have size (1)
-    map should contain key "P"
+    map should contain key "P".projectName
 
-    val p = map.get("P").get
+    val p = map.get("P".projectName).get
 
     p should contain key "Bug".typeName
     p.get("Bug".typeName) should be(Some(0.69))

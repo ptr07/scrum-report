@@ -15,7 +15,7 @@
 // limitations under the License.
 package pl.ptr.scrum.report.data
 
-import pl.ptr.scrum.report.dto.Types.{StatusName, TypeName}
+import pl.ptr.scrum.report.dto.Types.{Project, ProjectName, StatusName, TypeName}
 import pl.ptr.scrum.report.utils.ConfigurationLoader
 
 import scala.collection.immutable.Map
@@ -53,7 +53,7 @@ class GroupingAlgorithm {
     * @param tasks list of task
     * @return number of hours logged by ticket type
     */
-  def groupAndCountByProjectAndType(tasks: List[Task]): Map[String, Map[TypeName, Double]] = {
+  def groupAndCountByProjectAndType(tasks: List[Task]): Map[ProjectName, Map[TypeName, Double]] = {
     def countMap(taskByKind: Map[TypeName, List[Task]]) = taskByKind.map(kv => (kv._1, count(estimate)(kv._2)))
 
     countBuffersTasks(tasks).groupBy(task => task.project).map(kv => (kv._1, countMap(kv._2.groupBy(_.kind))))

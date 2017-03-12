@@ -21,9 +21,9 @@ import org.apache.commons.lang3.StringUtils
 import org.apache.poi.hssf.usermodel.{HSSFSheet, HSSFWorkbook}
 import org.apache.poi.poifs.filesystem.POIFSFileSystem
 import org.apache.poi.ss.usermodel.{Cell, DataFormatter, Row}
-import pl.ptr.scrum.report.dto.Types.{StatusName,TypeName}
+import pl.ptr.scrum.report.dto.Types.{ProjectName, StatusName, TypeName}
 import pl.ptr.scrum.report.utils.ConfigurationLoader
-import  pl.ptr.scrum.report.utils.TypeMagic._
+import pl.ptr.scrum.report.utils.TypeMagic._
 
 import scala.collection.JavaConverters._
 import scala.collection.breakOut
@@ -39,7 +39,7 @@ import scala.collection.immutable.Map
   * @param estimate  task estimation in seconds
   * @param timeSpent work time logged for task in seconds
   */
-case class Task(kind: TypeName, summary: String, project: String, status: StatusName, estimate: Long, timeSpent: Long){
+case class Task(kind: TypeName, summary: String, project: ProjectName, status: StatusName, estimate: Long, timeSpent: Long){
   private val Conf = ConfigurationLoader.config
 
   def isFinished: Boolean ={
@@ -113,7 +113,7 @@ class Parser() {
           Task(
             cellMap("Issue Type").typeName,
             cellMap("Summary"),
-            getProject(cellMap("Key")),
+            getProject(cellMap("Key")).projectName,
             cellMap("Status").statusName,
             getLong(cellMap("Original Estimate")),
             getLong(cellMap("Time Spent"))

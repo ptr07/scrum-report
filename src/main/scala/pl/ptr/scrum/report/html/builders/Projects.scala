@@ -16,8 +16,9 @@
 package pl.ptr.scrum.report.html.builders
 
 import pl.ptr.scrum.report.dto.Report
-import pl.ptr.scrum.report.dto.Types.TypeName
+import pl.ptr.scrum.report.dto.Types.{ProjectName, TypeName}
 import pl.ptr.scrum.report.utils.TypeMagic._
+
 import scala.beans.BeanProperty
 import scala.collection.JavaConverters._
 
@@ -43,8 +44,8 @@ private[html] class Projects(report: Report) extends Builder(report) {
 
   }
 
-  private val projectsNames: List[String] = {
-    report.projectsMap.keys.toList.sorted
+  private val projectsNames: List[ProjectName] = {
+    report.projectsMap.keys.toList.sortWith(_ < _)
   }
 
   private val doneProjectsValues: List[Project] = {
@@ -54,7 +55,7 @@ private[html] class Projects(report: Report) extends Builder(report) {
         val name = taskType.name
         val color = taskType.color
         val values = projectsNames.map(name => report.valuesMap(lastLabel.get)
-          .projectsMap.getOrElse(name, Map())).map(_.getOrElse(name, 0.0))
+          .projectsMap.getOrElse(name.projectName, Map())).map(_.getOrElse(name, 0.0))
         Project(name, color, values)
       })
     } else {
@@ -66,8 +67,8 @@ private[html] class Projects(report: Report) extends Builder(report) {
 
     if (lastLabel.isDefined && report.valuesMap.contains(lastLabel.get)) {
 
-      def getAllValueByName(name : String)  = report.projectsMap.getOrElse(name, Map()).values.sum
-      def getDoneValueByName(name : String)  = report.valuesMap(lastLabel.get).projectsMap.getOrElse(name, Map()).values.sum
+      def getAllValueByName(name : String)  = report.projectsMap.getOrElse(name.projectName, Map()).values.sum
+      def getDoneValueByName(name : String)  = report.valuesMap(lastLabel.get).projectsMap.getOrElse(name.projectName, Map()).values.sum
 
       val toDo = conf.toDoStatus.typeName
       val toDoColor = conf.color.getOrElse(toDo,"#b3b3cc")
@@ -84,7 +85,7 @@ private[html] class Projects(report: Report) extends Builder(report) {
     conf.types.map(taskType => {
       val name = taskType.name
       val color = taskType.color
-      val values = projectsNames.map(name => report.projectsMap.getOrElse(name, Map())).map(_.getOrElse(name, 0.0))
+      val values = projectsNames.map(name => report.projectsMap.getOrElse(name.projectName, Map())).map(_.getOrElse(name, 0.0))
       Project(name, color, values)
     })
   }

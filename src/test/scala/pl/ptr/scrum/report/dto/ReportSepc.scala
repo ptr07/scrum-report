@@ -30,7 +30,7 @@ class ReportSepc extends FlatSpec with Matchers {
     "test",
     120,
     Map("Bug".typeName -> 120, "Story".typeName -> 10),
-    Map("CM" -> Map("Bug".typeName -> 120, "Story".typeName -> 10)),
+    Map("CM".projectName -> Map("Bug".typeName -> 120, "Story".typeName -> 10)),
     Map("30/01" -> DayValue(Map("Done".statusName -> 120), Map()),
       "31/01" -> DayValue(Map("Done".statusName -> 118), Map()),
       "01/02" -> DayValue(Map("Done".statusName -> 102), Map()), "02/02" -> DayValue(Map("Done".statusName -> 84), Map())

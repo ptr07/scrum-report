@@ -21,7 +21,7 @@ import java.time.LocalDate
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import pl.ptr.scrum.report.dto.Report
-import pl.ptr.scrum.report.dto.Types.TypeName
+import pl.ptr.scrum.report.dto.Types.{ProjectName, TypeName}
 import pl.ptr.scrum.report.utils.Implicits._
 
 import scala.collection.immutable.Map
@@ -55,7 +55,7 @@ class Sprint(sprintNumber: Int, team: String) {
   }
 
 
-  def startSprint(dateFrom: LocalDate, dateTo: LocalDate, taskByTypes : Map[TypeName,Double], projectsMap: Map[String, Map[TypeName, Double]]): Report = {
+  def startSprint(dateFrom: LocalDate, dateTo: LocalDate, taskByTypes : Map[TypeName,Double], projectsMap: Map[ProjectName, Map[TypeName, Double]]): Report = {
     val dto = Report(sprintNumber, dateFrom, dateTo, team,taskByTypes.values.sum,taskByTypes,projectsMap,Map())
     mapper.writeValue(new File(createDbFile), dto)
     dto

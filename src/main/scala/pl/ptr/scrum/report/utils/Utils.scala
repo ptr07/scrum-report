@@ -19,7 +19,7 @@ import java.time.{LocalDate, ZoneId}
 import java.util.Date
 
 import com.typesafe.config.ConfigFactory
-import pl.ptr.scrum.report.dto.Types.{StatusName, TypeName}
+import pl.ptr.scrum.report.dto.Types.{ProjectName, StatusName, TypeName}
 import pureconfig._
 import pl.ptr.scrum.report.utils.TypeMagic._
 
@@ -105,6 +105,8 @@ object TypeMagic {
     def statusName : StatusName = s.asInstanceOf[StatusName]
 
     def typeName : TypeName = s.asInstanceOf[TypeName]
+
+    def projectName : ProjectName = s.asInstanceOf[ProjectName]
 
   }
 }
