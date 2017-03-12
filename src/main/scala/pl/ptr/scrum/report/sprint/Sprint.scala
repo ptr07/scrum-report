@@ -21,6 +21,7 @@ import java.time.LocalDate
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import pl.ptr.scrum.report.dto.Report
+import pl.ptr.scrum.report.dto.Types.TypeName
 import pl.ptr.scrum.report.utils.Implicits._
 
 import scala.collection.immutable.Map
@@ -36,7 +37,7 @@ class Sprint(sprintNumber: Int, team: String) {
 
 
   private def createDbFile = {
-    val path = System.getProperty("user.home") + "/.scrum-report";
+    val path = System.getProperty("user.home") + "/.scrum-report"
     val dir = new File(path)
     if (!dir.exists()) {
       dir.mkdir()
@@ -50,13 +51,13 @@ class Sprint(sprintNumber: Int, team: String) {
   }
 
   def writeSprint(dto: Report): Unit = {
-    mapper.writeValue(new File(createDbFile), dto);
+    mapper.writeValue(new File(createDbFile), dto)
   }
 
 
-  def startSprint(dateFrom: LocalDate, dateTo: LocalDate, taskByTypes : Map[String,Double],projectsMap: Map[String, Map[String, Double]]): Report = {
-    val dto = new Report(sprintNumber, dateFrom, dateTo, team,taskByTypes.values.sum,taskByTypes,projectsMap,Map())
-    mapper.writeValue(new File(createDbFile), dto);
+  def startSprint(dateFrom: LocalDate, dateTo: LocalDate, taskByTypes : Map[TypeName,Double], projectsMap: Map[String, Map[TypeName, Double]]): Report = {
+    val dto = Report(sprintNumber, dateFrom, dateTo, team,taskByTypes.values.sum,taskByTypes,projectsMap,Map())
+    mapper.writeValue(new File(createDbFile), dto)
     dto
   }
 

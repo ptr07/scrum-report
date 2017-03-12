@@ -16,6 +16,7 @@
 package pl.ptr.scrum.report.html.builders
 
 import pl.ptr.scrum.report.dto.Report
+import pl.ptr.scrum.report.dto.Types.TypeName
 
 /**
   * Created by ptr on 02.03.17.
@@ -31,7 +32,7 @@ private[html] class All(report: Report) extends Builder(report) {
 
   }
 
-  val taskTypesNames: List[String] = conf.types.map(_.name)
+  val taskTypesNames: List[TypeName] = conf.types.map(_.name)
 
   val taskTypesColors: List[String] = conf.types.map(_.color)
 

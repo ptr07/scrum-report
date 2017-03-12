@@ -19,9 +19,8 @@ import java.time.{LocalDate, ZoneId}
 import java.util.Date
 
 import com.typesafe.config.ConfigFactory
-import pl.ptr.scrum.report.dto.Types.StatusName
+import pl.ptr.scrum.report.dto.Types.{StatusName, TypeName}
 import pureconfig._
-
 import pl.ptr.scrum.report.utils.TypeMagic._
 
 
@@ -39,7 +38,7 @@ case class StatusWithColor(name: StatusName, color: String)
   * @param name  task type name
   * @param color state color in HEX value, for example #b3b3cc
   */
-case class TaskTypeWithColor(name: String, color: String)
+case class TaskTypeWithColor(name: TypeName, color: String)
 
 /**
   * Report configuration loaded from application.conf
@@ -65,7 +64,7 @@ case class ReportConfig(doneStatus: String = "",
     */
   def statuses: List[StatusWithColor] = status.map(name => StatusWithColor(name.statusName, color.getOrElse(name, "#b3b3cc")))
 
-  def types: List[TaskTypeWithColor] = taskTypes.map(name => TaskTypeWithColor(name, color.getOrElse(name, "#b3b3cc")))
+  def types: List[TaskTypeWithColor] = taskTypes.map(name => TaskTypeWithColor(name.typeName, color.getOrElse(name, "#b3b3cc")))
 
   def doneStatusName : StatusName = doneStatus.statusName
 
@@ -104,6 +103,8 @@ object TypeMagic {
 
   implicit class TaggedString(val s: String) extends AnyVal {
     def statusName : StatusName = s.asInstanceOf[StatusName]
+
+    def typeName : TypeName = s.asInstanceOf[TypeName]
 
   }
 }

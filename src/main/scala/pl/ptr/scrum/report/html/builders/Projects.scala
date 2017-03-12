@@ -16,12 +16,13 @@
 package pl.ptr.scrum.report.html.builders
 
 import pl.ptr.scrum.report.dto.Report
-
+import pl.ptr.scrum.report.dto.Types.TypeName
+import pl.ptr.scrum.report.utils.TypeMagic._
 import scala.beans.BeanProperty
 import scala.collection.JavaConverters._
 
 
-private[html] case class Project(@BeanProperty kind: String,
+private[html] case class Project(@BeanProperty kind: TypeName,
                                  @BeanProperty color: String,
                                  @BeanProperty values: List[Double]) {
   def valuesString: String = values.mkString(",")
@@ -68,7 +69,7 @@ private[html] class Projects(report: Report) extends Builder(report) {
       def getAllValueByName(name : String)  = report.projectsMap.getOrElse(name, Map()).values.sum
       def getDoneValueByName(name : String)  = report.valuesMap(lastLabel.get).projectsMap.getOrElse(name, Map()).values.sum
 
-      val toDo = conf.toDoStatus
+      val toDo = conf.toDoStatus.typeName
       val toDoColor = conf.color.getOrElse(toDo,"#b3b3cc")
 
       val values = projectsNames.map(name => getAllValueByName(name) - getDoneValueByName(name) )

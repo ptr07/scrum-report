@@ -29,8 +29,8 @@ class ReportSepc extends FlatSpec with Matchers {
   val report = new Report(15, LocalDate.parse("2017-01-30"), LocalDate.parse("2017-02-10"),
     "test",
     120,
-    Map("Bug" -> 120, "Story" -> 10),
-    Map("CM" -> Map("Bug" -> 120, "Story" -> 10)),
+    Map("Bug".typeName -> 120, "Story".typeName -> 10),
+    Map("CM" -> Map("Bug".typeName -> 120, "Story".typeName -> 10)),
     Map("30/01" -> DayValue(Map("Done".statusName -> 120), Map()),
       "31/01" -> DayValue(Map("Done".statusName -> 118), Map()),
       "01/02" -> DayValue(Map("Done".statusName -> 102), Map()), "02/02" -> DayValue(Map("Done".statusName -> 84), Map())

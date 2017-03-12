@@ -15,7 +15,7 @@
 // limitations under the License.
 package pl.ptr.scrum.report.data
 
-import pl.ptr.scrum.report.dto.Types.StatusName
+import pl.ptr.scrum.report.dto.Types.{StatusName, TypeName}
 import pl.ptr.scrum.report.utils.ConfigurationLoader
 
 import scala.collection.immutable.Map
@@ -43,7 +43,7 @@ class GroupingAlgorithm {
     * @param tasks list of task
     * @return number of hours logged by ticket type
     */
-  def groupAndCountByType(tasks: List[Task]): Map[String, Double] = {
+  def groupAndCountByType(tasks: List[Task]): Map[TypeName, Double] = {
     countBuffersTasks(tasks).groupBy(task => task.kind).map(kv => (kv._1, count(estimate)(kv._2)))
   }
 
@@ -53,15 +53,15 @@ class GroupingAlgorithm {
     * @param tasks list of task
     * @return number of hours logged by ticket type
     */
-  def groupAndCountByProjectAndType(tasks: List[Task]): Map[String, Map[String, Double]] = {
-    def countMap(taskByKind: Map[String, List[Task]]) = taskByKind.map(kv => (kv._1, count(estimate)(kv._2)))
+  def groupAndCountByProjectAndType(tasks: List[Task]): Map[String, Map[TypeName, Double]] = {
+    def countMap(taskByKind: Map[TypeName, List[Task]]) = taskByKind.map(kv => (kv._1, count(estimate)(kv._2)))
 
     countBuffersTasks(tasks).groupBy(task => task.project).map(kv => (kv._1, countMap(kv._2.groupBy(_.kind))))
   }
 
   /**
     * Filter tasks that are finished
-    * @param tasks
+    * @param tasks all task from report
     * @return
     */
   def filterDone(tasks: List[Task]) : List[Task] = {
