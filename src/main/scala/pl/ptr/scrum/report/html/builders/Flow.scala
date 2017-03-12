@@ -15,6 +15,7 @@
 // limitations under the License.
 package pl.ptr.scrum.report.html.builders
 
+import pl.ptr.scrum.report.dto.Types.StatusName
 import pl.ptr.scrum.report.dto.{DayValue, Report}
 
 import scala.beans.BeanProperty
@@ -35,16 +36,17 @@ private[html] class Flow(report: Report) extends Builder(report) {
     conf.statuses.map(status => {
       val name = status.name
       val color = status.color
-      val values = labels.map(label => report.valuesMap.get(label)).map(_.getOrElse(new DayValue()).statusHours).map(m => m.getOrElse(name, 0.0))
+      val values = labels.map(label => report.valuesMap.get(label)).map(_.getOrElse(new DayValue()).statusHours)
+        .map(m => m.getOrElse(name, 0.0))
       StatusValues(name, color, values)
     })
   }
 }
 
 private[html] case class StatusValues(
-                                       @BeanProperty name: String,
-                                @BeanProperty color: String,
-                                @BeanProperty values: List[Double]) {
+                                       @BeanProperty name: StatusName,
+                                       @BeanProperty color: String,
+                                       @BeanProperty values: List[Double]) {
   def valuesString: String = values.mkString(",")
 
 }

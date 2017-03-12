@@ -16,6 +16,7 @@
 package pl.ptr.scrum.report.data
 
 import org.scalatest.{FlatSpec, Matchers}
+import pl.ptr.scrum.report.utils.TestImplicits._
 
 class GroupingAlgorithmSpec extends FlatSpec with Matchers {
 

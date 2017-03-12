@@ -13,6 +13,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+package pl.ptr.scrum.report.main
+
 import java.io.{BufferedInputStream, File, FileInputStream}
 import java.nio.charset.Charset
 import java.time.LocalDate
@@ -23,7 +25,6 @@ import pl.ptr.scrum.report.data.{GroupingAlgorithm, Parser}
 import pl.ptr.scrum.report.dto.DayValue
 import pl.ptr.scrum.report.html.Html
 import pl.ptr.scrum.report.sprint.Sprint
-import pl.ptr.scrum.report.utils.ConfigurationLoader
 import resource._
 import scopt._
 
@@ -44,8 +45,6 @@ object Main extends App {
   val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM")
   val groupingAlgorithm = new GroupingAlgorithm()
   val xlsParser = new Parser()
-
-  private val conf = ConfigurationLoader.config
 
 
   val parser = new OptionParser[Config]("scrum-report") {

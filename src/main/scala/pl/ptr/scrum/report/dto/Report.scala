@@ -17,15 +17,18 @@ package pl.ptr.scrum.report.dto
 
 import java.util.Date
 
+import pl.ptr.scrum.report.dto.Types.StatusName
+import pl.ptr.scrum.report.utils.TypeMagic._
+
 import scala.beans.BeanProperty
 import scala.collection.immutable.Map
 
 
 case class DayValue(
                      @BeanProperty
-                     statusHours: Map[String, Double] = Map(),
+                     statusHours: Map[StatusName, Double] = Map(),
                      @BeanProperty
-                     projectsMap: Map[String, Map[String, Double]]= Map())
+                     projectsMap: Map[String, Map[String, Double]] = Map())
 
 case class Report(
                    @BeanProperty
@@ -45,5 +48,14 @@ case class Report(
                    @BeanProperty
                    valuesMap: Map[String, DayValue] = Map()
                  )
+
+object Types {
+
+  trait Status
+
+  type StatusName = String @@ Status
+
+
+}
 
 

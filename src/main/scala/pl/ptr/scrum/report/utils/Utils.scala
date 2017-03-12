@@ -19,7 +19,11 @@ import java.time.{LocalDate, ZoneId}
 import java.util.Date
 
 import com.typesafe.config.ConfigFactory
+import pl.ptr.scrum.report.dto.Types.StatusName
 import pureconfig._
+
+import pl.ptr.scrum.report.utils.TypeMagic._
+
 
 /**
   * JIRA state with assigned color
@@ -27,7 +31,7 @@ import pureconfig._
   * @param name  task state name
   * @param color state color in HEX value, for example #b3b3cc
   */
-case class Status(name: String, color: String)
+case class StatusWithColor(name: StatusName, color: String)
 
 /**
   * JIRA Issue type with assigned color
@@ -35,7 +39,7 @@ case class Status(name: String, color: String)
   * @param name  task type name
   * @param color state color in HEX value, for example #b3b3cc
   */
-case class TaskType(name: String, color: String)
+case class TaskTypeWithColor(name: String, color: String)
 
 /**
   * Report configuration loaded from application.conf
@@ -59,9 +63,12 @@ case class ReportConfig(doneStatus: String = "",
     *
     * @return list of all available task status in display order
     */
-  def statuses: List[Status] = status.map(name => new Status(name, color.getOrElse(name, "#b3b3cc")))
+  def statuses: List[StatusWithColor] = status.map(name => StatusWithColor(name.statusName, color.getOrElse(name, "#b3b3cc")))
 
-  def types: List[TaskType] = taskTypes.map(name => new TaskType(name, color.getOrElse(name, "#b3b3cc")))
+  def types: List[TaskTypeWithColor] = taskTypes.map(name => TaskTypeWithColor(name, color.getOrElse(name, "#b3b3cc")))
+
+  def doneStatusName : StatusName = doneStatus.statusName
+
 }
 
 /**
@@ -89,4 +96,14 @@ object Implicits {
 
   implicit def dateToLocalDate(date: Date): LocalDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
 
+}
+
+object TypeMagic {
+  type Tagged[U] = { type Tag = U }
+  type @@[T, U] = T with Tagged[U]
+
+  implicit class TaggedString(val s: String) extends AnyVal {
+    def statusName : StatusName = s.asInstanceOf[StatusName]
+
+  }
 }

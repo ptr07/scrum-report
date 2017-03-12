@@ -19,6 +19,7 @@ import java.time.LocalDate
 
 import org.scalatest._
 import pl.ptr.scrum.report.utils.Implicits._
+import pl.ptr.scrum.report.utils.TypeMagic._
 
 /**
   * Created by ptr on 11.02.17.
@@ -30,10 +31,10 @@ class ReportSepc extends FlatSpec with Matchers {
     120,
     Map("Bug" -> 120, "Story" -> 10),
     Map("CM" -> Map("Bug" -> 120, "Story" -> 10)),
-    Map("30/01" -> DayValue(Map("Done" -> 120), Map()),
-      "31/01" -> DayValue(Map("Done" -> 118), Map()),
-      "01/02" -> DayValue(Map("Done" -> 102), Map()), "02/02" -> DayValue(Map("Done" -> 84), Map())
-      , "03/02" -> DayValue(Map("Done" -> 87), Map()), "06/02" -> DayValue(Map("Done" -> 45), Map()))
+    Map("30/01" -> DayValue(Map("Done".statusName -> 120), Map()),
+      "31/01" -> DayValue(Map("Done".statusName -> 118), Map()),
+      "01/02" -> DayValue(Map("Done".statusName -> 102), Map()), "02/02" -> DayValue(Map("Done".statusName -> 84), Map())
+      , "03/02" -> DayValue(Map("Done".statusName -> 87), Map()), "06/02" -> DayValue(Map("Done".statusName -> 45), Map()))
   )
 
 

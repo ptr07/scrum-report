@@ -15,6 +15,7 @@
 // limitations under the License.
 package pl.ptr.scrum.report.data
 
+import pl.ptr.scrum.report.dto.Types.StatusName
 import pl.ptr.scrum.report.utils.ConfigurationLoader
 
 import scala.collection.immutable.Map
@@ -31,7 +32,7 @@ class GroupingAlgorithm {
     * @param tasks list of task
     * @return number of hours logged by ticket status
     */
-  def groupAndCountByStatus(tasks: List[Task]): Map[String, Double] = {
+  def groupAndCountByStatus(tasks: List[Task]): Map[StatusName, Double] = {
     countBuffersTasks(tasks).groupBy(_.status).map(kv => (kv._1, count(estimate)(kv._2)))
 
   }
@@ -73,7 +74,7 @@ class GroupingAlgorithm {
     def splitTask(task: Task): List[Task] = {
       val tEstimate = task.estimate
       val tTimeSpend = if (task.timeSpent > tEstimate) tEstimate else task.timeSpent
-      List(task.copy(estimate = tEstimate - tTimeSpend), task.copy(status=Conf.doneStatus,estimate = tTimeSpend))
+      List(task.copy(estimate = tEstimate - tTimeSpend), task.copy(status=Conf.doneStatusName,estimate = tTimeSpend))
     }
 
     tasks.flatMap(task => if (task.isBuffer) {

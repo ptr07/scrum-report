@@ -16,6 +16,7 @@
 package pl.ptr.scrum.report.html.builders
 
 import pl.ptr.scrum.report.dto.Report
+import pl.ptr.scrum.report.dto.Types.StatusName
 
 import scala.collection.immutable.Map
 
@@ -32,10 +33,10 @@ private[html] class BurnDown(report: Report) extends Builder(report) {
 
 
   private val values: List[Double] = {
-    def getDoneValue(map: Map[String, Double]): Double = {
+    def getDoneValue(map: Map[StatusName, Double]): Double = {
       val total = report.totalHours
-      if (map.contains(conf.doneStatus)) {
-        total - map(conf.doneStatus)
+      if (map.contains(conf.doneStatusName)) {
+        total - map(conf.doneStatusName)
       } else {
         total
       }
