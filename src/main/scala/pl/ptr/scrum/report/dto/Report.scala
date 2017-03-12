@@ -52,15 +52,12 @@ case class Report(
 object Types {
 
   trait Status
-
   type StatusName = String @@ Status
 
   trait Type
-
   type TypeName = String @@ Status
 
   trait Project
-
   type ProjectName = String @@ Project
 
 }

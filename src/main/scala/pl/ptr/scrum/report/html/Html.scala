@@ -16,13 +16,14 @@
 package pl.ptr.scrum.report.html
 
 import java.io.StringWriter
+import java.time.format.DateTimeFormatter
 
 import freemarker.template.Configuration
 import pl.ptr.scrum.report.dto.Report
 import pl.ptr.scrum.report.html.builders._
-import pl.ptr.scrum.report.utils.ConfigurationLoader
 
 import scala.collection.JavaConverters._
+import pl.ptr.scrum.report.utils.Implicits._
 
 /**
   * Created by ptr on 11.02.17.
@@ -31,8 +32,6 @@ class Html(sprintNumber: Int, reports: List[Report]) {
 
   val freemarkerConf = new Configuration
   freemarkerConf.setClassForTemplateLoading(getClass, "templates")
-
-  private val conf = ConfigurationLoader.config
 
 
   def getHtml: String = {
@@ -50,7 +49,9 @@ class Html(sprintNumber: Int, reports: List[Report]) {
 
     val template = freemarkerConf.getTemplate("chart.html")
     val data = scala.collection.mutable.Map[String, Object]()
-
+    data.put("sprintNumber", sprintNumber.toString)
+    data.put("dateFrom", formatter.format(dto.dateFrom))
+    data.put("dateTo",formatter.format(dto.dateTo))
     data ++= new BurnDown(dto).build
     data ++= new Flow(dto).build
     data ++= new Pie(dto).build
@@ -62,7 +63,9 @@ class Html(sprintNumber: Int, reports: List[Report]) {
     template.process(data.asJava, sw)
     sw.toString
 
-
   }
+
+  private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM")
+
 
 }

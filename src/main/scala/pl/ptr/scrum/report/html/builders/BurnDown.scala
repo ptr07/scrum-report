@@ -15,11 +15,20 @@
 // limitations under the License.
 package pl.ptr.scrum.report.html.builders
 
-import pl.ptr.scrum.report.dto.Report
 import pl.ptr.scrum.report.dto.Types.StatusName
+import pl.ptr.scrum.report.dto.{DayValue, Report}
 
 import scala.collection.immutable.Map
 
+
+/**
+  * Simple Burndown chart. For each day in Sprint, it subtract number of done hours from total hours.
+  * It presents team velocity.
+  * Trend line is generated to predict future velocity.
+  * Ideal line is generated to show appropriate ticket burning.
+  *
+  * @param report
+  */
 private[html] class BurnDown(report: Report) extends Builder(report) {
 
   def build: Map[String, Object] = {
@@ -32,7 +41,18 @@ private[html] class BurnDown(report: Report) extends Builder(report) {
   }
 
 
-  private val values: List[Double] = {
+  /**
+    * For each day in Sprint, it subtract number of done hours from total hours.
+    * Holes in data is filled by previous values.
+    */
+  private[html] val values: List[Double] = {
+
+    /**
+      * Calculates result
+      *
+      * @param map number of hours for task in status
+      * @return total number of hours subtract done hours
+      */
     def getDoneValue(map: Map[StatusName, Double]): Double = {
       val total = report.totalHours
       if (map.contains(conf.doneStatusName)) {
@@ -42,10 +62,46 @@ private[html] class BurnDown(report: Report) extends Builder(report) {
       }
     }
 
-    labels.map(label => report.valuesMap.get(label)).filter(_.isDefined).map(_.get.statusHours).map(getDoneValue)
+    /**
+      * Checks if it is last label defined in valuesMap as key
+      *
+      * @param label to analyze
+      * @return
+      */
+    def isNotLastValue(label: String): Boolean =
+      labels.drop(labels.indexOf(label)).find(report.valuesMap.contains).isDefined
+
+
+    /**
+      * Searches for values defined for previous days
+      *
+      * @param label to analyze
+      * @return previoud DayValue
+      */
+    def getLastDefinedValue(label: String): DayValue = {
+      val prevValue = labels.take(labels.indexOf(label)).reverse.find(report.valuesMap.contains)
+      report.valuesMap.getOrElse(prevValue.get, DayValue())
+
+    }
+
+    if (report.valuesMap.isEmpty) {
+      List()
+    } else {
+      labels
+        .filter(isNotLastValue).map(label => (label, report.valuesMap.get(label)))
+        .map { case (label, option) => option.getOrElse(
+          getLastDefinedValue(label)).statusHours
+        }
+        .map(getDoneValue)
+    }
+
   }
 
-  private val idealValues: List[Double] = {
+
+  /**
+    * Ideal line - line connecting beginning of sprint (total hours) with sprint end (0 hours)
+    */
+  private[html] val idealValues: List[Double] = {
     val xx = labelsRange
     if (xx.isEmpty) {
       List()
@@ -75,7 +131,10 @@ private[html] class BurnDown(report: Report) extends Builder(report) {
   }
   }
 
-  private val trendValues: List[Double] = {
+  /**
+    * Simple trend line based on values from last three days.
+    */
+  private[html] val trendValues: List[Double] = {
     val xx = labelsRange
     if (xx.isEmpty) {
       List()
