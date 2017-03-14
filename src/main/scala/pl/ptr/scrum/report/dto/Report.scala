@@ -26,9 +26,16 @@ import scala.collection.immutable.Map
 
 case class DayValue(
                      @BeanProperty
-                     statusHours: Map[StatusName, Double] = Map(),
+                     hoursByStatus: Map[StatusName, Double] = Map(),
                      @BeanProperty
-                     projectsMap: Map[ProjectName, Map[TypeName, Double]] = Map())
+                     doneHoursByType: Map[TypeName, Double] = Map(),
+                     @BeanProperty
+                     workLogByType: Map[TypeName, Double] = Map(),
+                     @BeanProperty
+                     projectsMap: Map[ProjectName, Map[TypeName, Double]] = Map(),
+                     @BeanProperty
+                     workLogMap: Map[ProjectName, Map[TypeName, Double]] = Map()
+                   )
 
 case class Report(
                    @BeanProperty

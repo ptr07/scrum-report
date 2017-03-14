@@ -1,20 +1,18 @@
 <div class="panel-body chart" style="float: left">
-    <canvas id="${name}-flow" width="550" height="400"></canvas>
+    <canvas id="${name}-worklog" class="chart" width="550" height="400"></canvas>
 </div>
 
 <script type="text/javascript">
+  var worklogDiv = document.getElementById("${name}-worklog");
 
-
-    var barDiv = document.getElementById("${name}-flow");
-
-    var myBarChart = new Chart(barDiv, {
+    var startChart = new Chart(worklogDiv, {
     type: 'bar',
     data:{
-    labels: [${labels}],
+    labels: [${projectsNames}],
     datasets: [
-        <#list statusValues as item>
+        <#list workLogProjectsValues as item>
             {
-                label: "${item.name()}",
+                label: "${item.kind()}",
                 backgroundColor:  "${item.color()}",
                 borderWidth: 1,
                 stacked: true,
@@ -23,10 +21,11 @@
         </#list>
 
     ]},
+
     options: {
         title: {
                     display: true,
-                    text: 'Flow chart'
+                    text: 'Work log / project'
         },
         scales: {
             xAxes: [{
@@ -35,7 +34,6 @@
                 stacked: true
             }],
             yAxes: [{
-
                 stacked: true
             }]
         }

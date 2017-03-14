@@ -90,7 +90,7 @@ private[html] class BurnDown(report: Report) extends Builder(report) {
       labels
         .filter(isNotLastValue).map(label => (label, report.valuesMap.get(label)))
         .map { case (label, option) => option.getOrElse(
-          getLastDefinedValue(label)).statusHours
+          getLastDefinedValue(label)).hoursByStatus
         }
         .map(getDoneValue)
     }

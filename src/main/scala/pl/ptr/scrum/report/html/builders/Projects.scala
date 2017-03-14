@@ -15,12 +15,13 @@
 // limitations under the License.
 package pl.ptr.scrum.report.html.builders
 
-import pl.ptr.scrum.report.dto.Report
 import pl.ptr.scrum.report.dto.Types.{ProjectName, TypeName}
+import pl.ptr.scrum.report.dto.{DayValue, Report}
 import pl.ptr.scrum.report.utils.TypeMagic._
 
 import scala.beans.BeanProperty
 import scala.collection.JavaConverters._
+import scala.collection.immutable.Map
 
 
 private[html] case class Project(@BeanProperty kind: TypeName,
@@ -39,7 +40,9 @@ private[html] class Projects(report: Report) extends Builder(report) {
     Map(
       "projectsNames" -> makeListOfString(projectsNames),
       "projectsValues" -> projectsValues.asJava,
-      "doneProjectsValues" -> (doneProjectsValues++toDoProjectsValues).asJava
+      "doneProjectsValues" -> (doneProjectsValues ++ toDoProjectsValues).asJava,
+      "workLogProjectsValues" -> (workLogProjectsValues).asJava
+
     )
 
   }
@@ -48,14 +51,22 @@ private[html] class Projects(report: Report) extends Builder(report) {
     report.projectsMap.keys.toList.sortWith(_ < _)
   }
 
-  private val doneProjectsValues: List[Project] = {
+
+  private val doneProjectsValues: List[Project] = hours(_.projectsMap)
+
+  private val workLogProjectsValues: List[Project] = hours(_.workLogMap)
+
+
+  private def hours(valueFunc: DayValue => Map[ProjectName, Map[TypeName, Double]]): List[Project] = {
 
     if (lastLabel.isDefined && report.valuesMap.contains(lastLabel.get)) {
       conf.types.map(taskType => {
         val name = taskType.name
         val color = taskType.color
-        val values = projectsNames.map(name => report.valuesMap(lastLabel.get)
-          .projectsMap.getOrElse(name.projectName, Map())).map(_.getOrElse(name, 0.0))
+        val values = projectsNames.map(name => {
+          val dayValue = report.valuesMap(lastLabel.get)
+          valueFunc(dayValue).getOrElse(name.projectName, Map())
+        }).map(_.getOrElse(name, 0.0))
         Project(name, color, values)
       })
     } else {
@@ -63,20 +74,22 @@ private[html] class Projects(report: Report) extends Builder(report) {
     }
   }
 
+
   private val toDoProjectsValues: List[Project] = {
 
     if (lastLabel.isDefined && report.valuesMap.contains(lastLabel.get)) {
 
-      def getAllValueByName(name : String)  = report.projectsMap.getOrElse(name.projectName, Map()).values.sum
-      def getDoneValueByName(name : String)  = report.valuesMap(lastLabel.get).projectsMap.getOrElse(name.projectName, Map()).values.sum
+      def getAllValueByName(name: String) = report.projectsMap.getOrElse(name.projectName, Map()).values.sum
+
+      def getDoneValueByName(name: String) = report.valuesMap(lastLabel.get).projectsMap.getOrElse(name.projectName, Map()).values.sum
 
       val toDo = conf.toDoStatus.typeName
-      val toDoColor = conf.color.getOrElse(toDo,"#b3b3cc")
+      val toDoColor = conf.color.getOrElse(toDo, "#b3b3cc")
 
-      val values = projectsNames.map(name => getAllValueByName(name) - getDoneValueByName(name) )
+      val values = projectsNames.map(name => getAllValueByName(name) - getDoneValueByName(name))
 
-      List(Project(toDo,toDoColor,values))
-    }else{
+      List(Project(toDo, toDoColor, values))
+    } else {
       List()
     }
   }

@@ -55,7 +55,7 @@ class Html(sprintNumber: Int, reports: List[Report]) {
     data ++= new BurnDown(dto).build
     data ++= new Flow(dto).build
     data ++= new Pie(dto).build
-    data ++= new All(dto).build
+    data ++= new Round(dto).build
     data ++= new Projects(dto).build
 
     data.put("name", dto.team)

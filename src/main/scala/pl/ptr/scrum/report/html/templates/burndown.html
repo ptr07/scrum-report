@@ -1,5 +1,5 @@
-<div class="panel-body" style="float: left">
-    <canvas id="${name}" width="600" height="400"></canvas>
+<div class="panel-body chart" style="float: left" >
+    <canvas id="${name}" class="chart" width="550" height="400"></canvas>
 </div>
 
 <script type="text/javascript">
@@ -45,7 +45,11 @@
 		    type: 'line',
 		    data: data,
 		    options: {
-		            responsive: false,
+                title: {
+                    display: true,
+                    text: 'Burn down chart'
+                },
+		        responsive: false,
 			    tooltips: {
 				enabled: false
 			    },

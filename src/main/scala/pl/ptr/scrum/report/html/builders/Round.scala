@@ -15,7 +15,7 @@
 // limitations under the License.
 package pl.ptr.scrum.report.html.builders
 
-import pl.ptr.scrum.report.dto.Types.StatusName
+import pl.ptr.scrum.report.dto.Types.TypeName
 import pl.ptr.scrum.report.dto.{DayValue, Report}
 
 import scala.collection.immutable.Map
@@ -23,31 +23,38 @@ import scala.collection.immutable.Map
 /**
   * Created by ptr on 02.03.17.
   */
-private[html] class Pie(report: Report) extends Builder(report) {
+private[html] class Round(report: Report) extends Builder(report) {
 
   def build: Map[String, Object] = {
     Map(
-      "labels" -> makeListOfString(labels),
+      "taskTypesNames" -> makeListOfString(taskTypesNames),
+      "taskTypesValues" -> makeListOfValues(taskTypesValues),
+      "taskTypesColors" -> makeListOfString(taskTypesColors),
 
-      "statuses" -> makeListOfString(conf.statuses.map(_.name)),
-
-      "hoursByStatus" -> makeListOfValues(hoursByStatus)
+      "workLogByType" -> makeListOfValues(workLogByType),
+      "doneHoursByType" -> makeListOfValues(doneHoursByType)
     )
 
   }
 
 
-  val taskTypesColors: List[String] = conf.types.map(_.color)
+  private val taskTypesNames: List[TypeName] = conf.types.map(_.name)
 
-  private val hoursByStatus: List[Double] = hours(_.hoursByStatus)
+  private val taskTypesColors: List[String] = conf.types.map(_.color)
+
+  private val taskTypesValues: List[Double] = conf.types.map(tt => report.taskTypes.getOrElse(tt.name, 0.0))
+
+  private val workLogByType: List[Double] = hours(_.workLogByType)
+
+  private val doneHoursByType: List[Double] = hours(_.doneHoursByType)
 
 
-  private def hours(valueFunc: DayValue => Map[StatusName, Double]): List[Double] = {
+  private def hours(valueFunc: DayValue => Map[TypeName, Double]): List[Double] = {
     val lastLabel = labels.reverse.find(report.valuesMap.contains)
 
     if (lastLabel.isDefined && report.valuesMap.contains(lastLabel.get)) {
       val valuesInLastDay = valueFunc(report.valuesMap(lastLabel.get))
-      conf.statuses.map(status => valuesInLastDay.get(status.name)).map(op => if (op.isDefined) op.get else 0.0)
+      conf.types.map(t => valuesInLastDay.get(t.name)).map(op => if (op.isDefined) op.get else 0.0)
     } else {
       List()
     }

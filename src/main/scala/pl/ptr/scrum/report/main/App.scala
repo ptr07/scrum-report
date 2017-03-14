@@ -71,7 +71,7 @@ object Main extends App {
         opt[File]('f', "file").required().action((x, c) =>
           c.copy(file = Some(x))).text("Sprint report file"),
         opt[String]('d', "date").optional().action((x, c) =>
-          c.copy(date = LocalDate.parse(x))).text("Report date") ,
+          c.copy(date = LocalDate.parse(x))).text("Report date"),
         opt[Unit]('y', "yesterday").optional().action((_, c) =>
           c.copy(date = LocalDate.now().minusDays(1))).text("Report date is yesterday")
       )
@@ -94,20 +94,23 @@ object Main extends App {
     case Some(config) => {
       config.command match {
         case "start" => config.teams.foreach(team => {
-
-          for {
-            fis <- managed(new BufferedInputStream(new FileInputStream(config.file.get)))
-          } {
-            val list = xlsParser.parseData(fis)
-            val taskTypes = groupingAlgorithm.groupAndCountByType(list)
-            val projectMap = groupingAlgorithm.groupAndCountByProjectAndType(list)
-            new Sprint(config.sprintNumber, team)
-              .startSprint(config.dateFrom, config.dateTo, taskTypes,projectMap)
+          if (config.file.isDefined && config.file.get.exists()) {
+            for {
+              fis <- managed(new BufferedInputStream(new FileInputStream(config.file.get)))
+            } {
+              val list = xlsParser.parseData(fis)
+              val taskTypes = groupingAlgorithm.groupAndCountHoursByType(list)
+              val projectMap = groupingAlgorithm.groupAndCountHoursByProjectAndType(list)
+              new Sprint(config.sprintNumber, team)
+                .startSprint(config.dateFrom, config.dateTo, taskTypes, projectMap)
+            }
+          } else {
+            println("File not extist!")
           }
         })
 
         case "data" => {
-          if (config.file.isDefined) {
+          if (config.file.isDefined && config.file.get.exists()) {
             config.teams.foreach(team => {
               val sprint = new Sprint(config.sprintNumber, team)
               val dto = sprint.readSprint()
@@ -116,12 +119,20 @@ object Main extends App {
               } {
                 val list = xlsParser.parseData(fis)
                 val time = groupingAlgorithm.groupAndCountByStatus(list)
-                val projectMap = groupingAlgorithm.groupAndCountByProjectAndType(groupingAlgorithm.filterDone(list))
-                val map = (formatter.format(config.date) -> DayValue(time,projectMap))
+                val projectMap = groupingAlgorithm.groupAndCountHoursByProjectAndType(groupingAlgorithm.filterDone(list))
+                val workLogMap = groupingAlgorithm.groupAndCountWorkByProjectAndType(list)
+
+                val doneHoursByType = groupingAlgorithm.groupAndCountHoursByType(groupingAlgorithm.filterDone(list))
+                val workLogByType = groupingAlgorithm.groupAndCountWorkByType(list)
+
+                val map = (formatter.format(config.date) -> DayValue(time, doneHoursByType, workLogByType, projectMap, workLogMap))
                 sprint.writeSprint(dto.copy(valuesMap = dto.valuesMap + map))
               }
             })
+          } else {
+            println("File not extist!")
           }
+
         }
         case "report" => {
           if (config.out.isDefined) {

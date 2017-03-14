@@ -41,10 +41,33 @@ class GroupingAlgorithm {
     * Tickets are grouped by issue type.
     *
     * @param tasks list of task
+    * @return number of hours estimated by ticket type
+    */
+  def groupAndCountHoursByType(tasks: List[Task]): Map[TypeName, Double] = {
+    countBuffersTasks(tasks).groupBy(task => task.kind).map(kv => (kv._1, count(estimate)(kv._2)))
+  }
+
+  /**
+    * Tickets are grouped by issue type.
+    *
+    * @param tasks list of task
     * @return number of hours logged by ticket type
     */
-  def groupAndCountByType(tasks: List[Task]): Map[TypeName, Double] = {
-    countBuffersTasks(tasks).groupBy(task => task.kind).map(kv => (kv._1, count(estimate)(kv._2)))
+  def groupAndCountWorkByType(tasks: List[Task]): Map[TypeName, Double] = {
+    countBuffersTasks(tasks).groupBy(task => task.kind).map(kv => (kv._1, count(workLog)(kv._2)))
+  }
+
+
+  /**
+    * Tickets are grouped by project and issue type.
+    *
+    * @param tasks list of task
+    * @return number of hours estimated by ticket type
+    */
+  def groupAndCountHoursByProjectAndType(tasks: List[Task]): Map[ProjectName, Map[TypeName, Double]] = {
+    def countMap(taskByKind: Map[TypeName, List[Task]]) = taskByKind.map(kv => (kv._1, count(estimate)(kv._2)))
+
+    countBuffersTasks(tasks).groupBy(task => task.project).map(kv => (kv._1, countMap(kv._2.groupBy(_.kind))))
   }
 
   /**
@@ -53,8 +76,8 @@ class GroupingAlgorithm {
     * @param tasks list of task
     * @return number of hours logged by ticket type
     */
-  def groupAndCountByProjectAndType(tasks: List[Task]): Map[ProjectName, Map[TypeName, Double]] = {
-    def countMap(taskByKind: Map[TypeName, List[Task]]) = taskByKind.map(kv => (kv._1, count(estimate)(kv._2)))
+  def groupAndCountWorkByProjectAndType(tasks: List[Task]): Map[ProjectName, Map[TypeName, Double]] = {
+    def countMap(taskByKind: Map[TypeName, List[Task]]) = taskByKind.map(kv => (kv._1, count(workLog)(kv._2)))
 
     countBuffersTasks(tasks).groupBy(task => task.project).map(kv => (kv._1, countMap(kv._2.groupBy(_.kind))))
   }
@@ -85,6 +108,8 @@ class GroupingAlgorithm {
   }
 
   private def estimate(task: Task): Long = task.estimate
+
+  private def workLog(task: Task): Long = task.timeSpent
 
 
   private def count(valFun: Task => Long)(tasks: List[Task]): Double = Math.round(tasks.map(valFun).sum * 100 / SecondsInHour) / 100.0

@@ -1,6 +1,6 @@
 
-<div class="panel-body" style="float: left">
-    <canvas id="${name}-pie" width="600" height="400"></canvas>
+<div class="panel-body chart" style="float: left">
+    <canvas id="${name}-pie" class="chart" width="550" height="400"></canvas>
 </div>
 
 <script type="text/javascript">
@@ -11,7 +11,7 @@
     data: {labels: [${statuses}],
     datasets: [
         {
-            data: [${pieValues}],
+            data: [${hoursByStatus}],
             backgroundColor: [
                 "#b3b3cc",
                 "#ff5c33",
@@ -26,7 +26,10 @@
             ]
 
         }]
-    },options: {showAllTooltips: true, responsive: false}
+    },options: {title: {
+                    display: true,
+                    text: 'Hours/ticket status'
+                },showAllTooltips: true, responsive: false}
     });
 
 </script>

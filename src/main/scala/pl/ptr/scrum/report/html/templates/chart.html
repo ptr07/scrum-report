@@ -1,14 +1,19 @@
-<div class="panel panel-default" style="padding:20px; height: 1000px; margin: auto;">
+<div class="panel panel-default" style="padding:20px; height: 1350px; margin: auto;">
     <div class="page-header">
-        <h1>Sprint ${sprintNumber} (${dateFrom}-${dateTo}), ${name} </h1>
+        <h4>Sprint ${sprintNumber} (${dateFrom}-${dateTo}), ${name} </h4>
     </div>
 
     <#include "burndown.html">
     <#include "flow.html">
     <#include "pie.html">
-    <#include "all.html">
+
+    <div style="clear:both"></div>
+    <#include "round.html">
+    <div style="clear:both"></div>
+
     <#include "start.html">
     <#include "done.html">
+    <#include "worklog.html">
 
 
 </div>
