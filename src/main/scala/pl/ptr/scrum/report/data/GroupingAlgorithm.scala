@@ -54,7 +54,7 @@ class GroupingAlgorithm {
     * @return number of hours logged by ticket type
     */
   def groupAndCountWorkByType(tasks: List[Task]): Map[TypeName, Double] = {
-    countBuffersTasks(tasks).groupBy(task => task.kind).map(kv => (kv._1, count(workLog)(kv._2)))
+    tasks.groupBy(task => task.kind).map(kv => (kv._1, count(workLog)(kv._2)))
   }
 
 
@@ -79,7 +79,7 @@ class GroupingAlgorithm {
   def groupAndCountWorkByProjectAndType(tasks: List[Task]): Map[ProjectName, Map[TypeName, Double]] = {
     def countMap(taskByKind: Map[TypeName, List[Task]]) = taskByKind.map(kv => (kv._1, count(workLog)(kv._2)))
 
-    countBuffersTasks(tasks).groupBy(task => task.project).map(kv => (kv._1, countMap(kv._2.groupBy(_.kind))))
+    tasks.groupBy(task => task.project).map(kv => (kv._1, countMap(kv._2.groupBy(_.kind))))
   }
 
   /**
