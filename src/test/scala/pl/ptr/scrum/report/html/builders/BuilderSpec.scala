@@ -13,18 +13,58 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package pl.ptr.scrum.report.dto
+package pl.ptr.scrum.report.html.builders
 
 import java.time.LocalDate
 
-import org.scalatest._
+import org.scalatest.{FlatSpec, Matchers}
+import pl.ptr.scrum.report.dto.{DayValue, Report}
 import pl.ptr.scrum.report.utils.Implicits._
 import pl.ptr.scrum.report.utils.TypeMagic._
 
 /**
-  * Created by ptr on 11.02.17.
+  * Created by ptr on 19.03.17.
   */
-class ReportSepc extends FlatSpec with Matchers {
+class BuilderSpec extends FlatSpec with Matchers {
+
+  behavior of "An Builder chart generator"
+
+  private class MockBuilder(report: Report) extends Builder(report) {
+    def build(): Map[String, Object] = Map()
+
+    def publicLabels: List[String] = labels
+
+    def publicLastLabel: Option[String] = lastLabel
+  }
+
+
+  "Label generated for report" should " ignore weekends and count every other day" in {
+    val builder = new MockBuilder(trivialReport)
+
+    builder.publicLabels should have size (10)
+    builder.publicLabels(0) should be("30/01")
+    builder.publicLabels(9) should be("10/02")
+
+  }
+
+  "LastLabel generated for report" should " be last date used in value maps" in {
+    val trivialBuilder = new MockBuilder(trivialReport)
+
+    trivialBuilder.publicLastLabel should not be defined
+
+    val builder = new MockBuilder(report)
+
+    builder.publicLastLabel should be(Some("06/02"))
+
+  }
+
+  val trivialReport = Report(15, LocalDate.parse("2017-01-30"), LocalDate.parse("2017-02-10"),
+    "test",
+    130,
+    Map("Bug".typeName -> 120, "Story".typeName -> 10),
+    Map("CM".projectName -> Map("Bug".typeName -> 120, "Story".typeName -> 10)),
+    Map()
+  )
 
   val report = new Report(15, LocalDate.parse("2017-01-30"), LocalDate.parse("2017-02-10"),
     "test",

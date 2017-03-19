@@ -28,6 +28,38 @@ import pl.ptr.scrum.report.sprint.Sprint
 import resource._
 import scopt._
 
+/**
+  * Command line parameters config
+  *
+  * Usage: scrum-report [start|data|report] [options] <team1> <team2> ...
+  *
+  * -n, --sprintNumber <value>
+  * Enter sprint number
+  * Command: start [options]
+  * Start sprint
+  * -f, --file <value>       Sprint report file
+  * -s, --dateFrom <value>   Sprint start date
+  * -e, --dateTo <value>     Sprint end date
+  * Command: data [options]
+  * Add date from xls report
+  * -f, --file <value>       Sprint report file
+  * -d, --date <value>       Report date
+  * -y, --yesterday          Report date is yesterday
+  * Command: report [options]
+  * Generate html report
+  * -o, --out <value>        Output file
+  * <team1> <team2> ...      Teams
+  * --help                   prints this usage text
+  *
+  * @param command      start, data, report options
+  * @param file         path to xls report with JIRA tickets
+  * @param out          path to report.html file
+  * @param sprintNumber number of sprint
+  * @param dateFrom     start date for sprint
+  * @param dateTo       end date for sprint
+  * @param date         data generation time
+  * @param teams        list of teams used for operation
+  */
 case class Config(
                    command: String = "",
                    file: Option[File] = None,

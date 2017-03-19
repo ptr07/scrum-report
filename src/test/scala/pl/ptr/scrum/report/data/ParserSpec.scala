@@ -16,7 +16,7 @@
 package pl.ptr.scrum.report.data
 
 import java.io.{BufferedInputStream, File, FileInputStream}
-
+import pl.ptr.scrum.report.utils.TypeMagic._
 import org.scalatest.{BeforeAndAfterEach, FlatSpec, Matchers}
 
 /**
@@ -35,6 +35,55 @@ class ParserSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
     val list = new Parser().parseData(badFis)
     list should be(empty)
   }
+
+  "A example xls file" should "have valid data in status" in {
+    val list = new Parser().parseData(exampleFis)
+    val ga = new GroupingAlgorithm
+
+    val map = ga.groupAndCountByStatus(list)
+    map.get("Blocked".statusName) should be(Some(6))
+    map.get("Business done".statusName) should be(Some(34.5))
+    map.get("Developed".statusName) should be(Some(4))
+    map.get("Done".statusName) should be(Some(0.5))
+    map.get("In Progress".statusName) should be(Some(14.5))
+    map.get("In Test".statusName) should be(Some(36.5))
+    map.get("Reopened".statusName) should be(Some(2))
+    map.get("To Do".statusName) should be(Some(45.5))
+  }
+
+  "A example xls file" should "have valid data in task types" in {
+    val list = new Parser().parseData(exampleFis)
+    val ga = new GroupingAlgorithm
+
+    val map = ga.groupAndCountHoursByType(list)
+    map.get("Story".typeName) should be(Some(126))
+    map.get("Change request".typeName) should be(Some(1.0))
+    map.get("Bug".typeName) should be(Some(16.5))
+
+  }
+
+  "A example xls file" should "have valid data in task projects" in {
+    val list = new Parser().parseData(exampleFis)
+    val ga = new GroupingAlgorithm
+
+    val map = ga.groupAndCountHoursByProjectAndType(list)
+    map should contain key ("ANT".projectName)
+    map should contain key ("CDB".projectName)
+    map should contain key ("KOR".projectName)
+    map should contain key ("SOF".projectName)
+    map should contain key ("AB".projectName)
+
+    val antMap = map.get("ANT".projectName)
+
+    antMap.get("Story".typeName) should be(59.0)
+    antMap.get("Change request".typeName) should be(1.0)
+    antMap.get("Bug".typeName) should be(6.5)
+
+
+
+  }
+
+
 
   var exampleFis: BufferedInputStream = null
 

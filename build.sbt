@@ -34,6 +34,7 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 libraryDependencies += "org.apache.commons" % "commons-math3" % "3.2"
 libraryDependencies += "com.typesafe" % "config" % "1.3.1"
 libraryDependencies += "com.github.melrief" %% "pureconfig" % "0.5.1"
+libraryDependencies += "org.scalamock" %% "scalamock-scalatest-support" % "3.5.0" % Test
 
 
 //import sbtassembly.AssemblyPlugin.defaultShellScript

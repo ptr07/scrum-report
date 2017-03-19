@@ -26,7 +26,9 @@ import scala.collection.JavaConverters._
 import pl.ptr.scrum.report.utils.Implicits._
 
 /**
-  * Created by ptr on 11.02.17.
+  * Generated html report using list of [[Report]] data and freemarker templates
+  * @param sprintNumber
+  * @param reports
   */
 class Html(sprintNumber: Int, reports: List[Report]) {
 

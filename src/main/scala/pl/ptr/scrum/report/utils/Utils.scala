@@ -20,8 +20,8 @@ import java.util.Date
 
 import com.typesafe.config.ConfigFactory
 import pl.ptr.scrum.report.dto.Types.{ProjectName, StatusName, TypeName}
-import pureconfig._
 import pl.ptr.scrum.report.utils.TypeMagic._
+import pureconfig._
 
 
 /**
@@ -48,7 +48,7 @@ case class TaskTypeWithColor(name: TypeName, color: String)
   * @param bufferSummary name of tasks used as buffers
   * @param status        list of available task statuses
   * @param color         color assigned to task status, or task type
-  * @param taskTypes   used ticket types
+  * @param taskTypes     used ticket types
   */
 case class ReportConfig(doneStatus: String = "",
                         toDoStatus: String = "",
@@ -64,14 +64,25 @@ case class ReportConfig(doneStatus: String = "",
     */
   def statuses: List[StatusWithColor] = status.map(name => StatusWithColor(name.statusName, color.getOrElse(name, "#b3b3cc")))
 
+  /**
+    * Creates list of available task types with colors in specified order
+    *
+    * @return list of all available task types in display order
+    */
   def types: List[TaskTypeWithColor] = taskTypes.map(name => TaskTypeWithColor(name.typeName, color.getOrElse(name, "#b3b3cc")))
 
-  def doneStatusName : StatusName = doneStatus.statusName
+
+  /**
+    * Done status, used for generating burn down chart
+    *
+    * @return done status
+    */
+  def doneStatusName: StatusName = doneStatus.statusName
 
 }
 
 /**
-  *  [[ReportConfig]] factory
+  * [[ReportConfig]] factory
   */
 object ConfigurationLoader {
 
@@ -97,16 +108,25 @@ object Implicits {
 
 }
 
+/**
+  * Unboxed Tagged Types - can "tag" types with a keyword, without loosing all its operations.
+  *
+  */
 object TypeMagic {
-  type Tagged[U] = { type Tag = U }
+  type Tagged[U] = {type Tag = U}
   type @@[T, U] = T with Tagged[U]
 
+  /**
+    * Implicit class responsible for conversion from simple String to Tagged one.
+    * @param s string value
+    */
   implicit class TaggedString(val s: String) extends AnyVal {
-    def statusName : StatusName = s.asInstanceOf[StatusName]
+    def statusName: StatusName = s.asInstanceOf[StatusName]
 
-    def typeName : TypeName = s.asInstanceOf[TypeName]
+    def typeName: TypeName = s.asInstanceOf[TypeName]
 
-    def projectName : ProjectName = s.asInstanceOf[ProjectName]
+    def projectName: ProjectName = s.asInstanceOf[ProjectName]
 
   }
+
 }

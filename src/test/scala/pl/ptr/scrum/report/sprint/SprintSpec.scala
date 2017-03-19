@@ -22,9 +22,7 @@ import pl.ptr.scrum.report.dto.{DayValue, Report}
 import pl.ptr.scrum.report.utils.Implicits._
 import pl.ptr.scrum.report.utils.TypeMagic._
 
-/**
-  * Created by ptr on 11.02.17.
-  */
+
 class SprintSpec extends FlatSpec with Matchers {
 
 

@@ -41,7 +41,8 @@ class BurnDownSpec extends FlatSpec with Matchers {
     val burnDown = new BurnDown(trivialReport)
 
     burnDown.values.length should be(0)
-
+    burnDown.idealValues.length should be (10)
+    burnDown.trendValues.length should be (10)
   }
 
   val singleReport = trivialReport.copy(valuesMap =   Map("30/01" -> DayValue(Map("To Do".statusName -> 130), Map())))
@@ -75,13 +76,25 @@ class BurnDownSpec extends FlatSpec with Matchers {
   behavior of "An IdealLine"
 
 
-
   "Ideal line for value map " should "generate result without errors" in {
     val burnDown = new BurnDown(trivialReport)
 
     burnDown.idealValues.length should be(10)
     burnDown.idealValues(0) should be (130)
     burnDown.idealValues(9) should be (0)
+
+  }
+
+
+  behavior of "An TrendLine"
+
+
+  "Trend line for value map " should "generate result without errors" in {
+    val burnDown = new BurnDown(withEmptyReport)
+
+    burnDown.trendValues.length should be(10)
+    burnDown.trendValues(0) should be (130)
+    burnDown.trendValues(9) should be (40)
 
   }
 

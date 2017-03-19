@@ -27,16 +27,30 @@ import pl.ptr.scrum.report.utils.Implicits._
 import scala.collection.immutable.Map
 
 /**
-  * Created by ptr on 11.02.17.
+  * Utility class responsible for reading and writing sprint data to files.
+  * Each sprint is stored in ~/.scrum-report directory in individual file.
+  *
+  * For example: sprint 10 for team1 will be saved in: ~/.scrum-report/file-team1-sprint-10.db
+  *
+  * @param sprintNumber number of sprint
+  * @param team         team name
   */
 class Sprint(sprintNumber: Int, team: String) {
 
+  /**
+    * Object <-> Json conversion using jackson
+    */
   val mapper = new ObjectMapper()
   mapper.registerModule(DefaultScalaModule)
   mapper.writerWithDefaultPrettyPrinter()
 
 
-  private def createDbFile = {
+  /**
+    * Created db file. Each sprint is stored in ~/.scrum-report directory in individual file.
+    * For example: sprint 10 for team1 will be saved in: ~/.scrum-report/file-team1-sprint-10.db
+    * @return path to sprint db file
+    */
+  private def createDbFile : String = {
     val path = System.getProperty("user.home") + "/.scrum-report"
     val dir = new File(path)
     if (!dir.exists()) {
@@ -46,17 +60,35 @@ class Sprint(sprintNumber: Int, team: String) {
 
   }
 
+  /**
+    * Reads data from db file to [[Report]] dto
+    * @return
+    */
   def readSprint(): Report = {
     mapper.readValue(new File(createDbFile), classOf[Report])
   }
 
+  /**
+    * Data from each day should be stored in db file. Write method updates sprint data using [[Report]] dto.
+    *
+    * @param dto
+    */
   def writeSprint(dto: Report): Unit = {
     mapper.writeValue(new File(createDbFile), dto)
   }
 
 
-  def startSprint(dateFrom: LocalDate, dateTo: LocalDate, taskByTypes : Map[TypeName,Double], projectsMap: Map[ProjectName, Map[TypeName, Double]]): Report = {
-    val dto = Report(sprintNumber, dateFrom, dateTo, team,taskByTypes.values.sum,taskByTypes,projectsMap,Map())
+  /**
+    * Special method used for initializing sprint
+    *
+    * @param dateFrom    start date
+    * @param dateTo      end date
+    * @param taskByTypes initial task types generated on Spring Planning
+    * @param projectsMap initial project map generated on Sprint Planning
+    * @return [[Report]] object
+    */
+  def startSprint(dateFrom: LocalDate, dateTo: LocalDate, taskByTypes: Map[TypeName, Double], projectsMap: Map[ProjectName, Map[TypeName, Double]]): Report = {
+    val dto = Report(sprintNumber, dateFrom, dateTo, team, taskByTypes.values.sum, taskByTypes, projectsMap, Map())
     mapper.writeValue(new File(createDbFile), dto)
     dto
   }
