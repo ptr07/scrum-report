@@ -31,6 +31,7 @@ import scopt._
 /**
   * Command line parameters config
   *
+  * {{{
   * Usage: scrum-report [start|data|report] [options] <team1> <team2> ...
   *
   * -n, --sprintNumber <value>
@@ -50,6 +51,7 @@ import scopt._
   * -o, --out <value>        Output file
   * <team1> <team2> ...      Teams
   * --help                   prints this usage text
+  * }}}
   *
   * @param command      start, data, report options
   * @param file         path to xls report with JIRA tickets
@@ -123,7 +125,7 @@ object Main extends App {
 
 
   parser.parse(args, Config()) match {
-    case Some(config) => {
+    case Some(config) =>
       config.command match {
         case "start" => config.teams.foreach(team => {
           if (config.file.isDefined && config.file.get.exists()) {
@@ -141,7 +143,7 @@ object Main extends App {
           }
         })
 
-        case "data" => {
+        case "data" =>
           if (config.file.isDefined && config.file.get.exists()) {
             config.teams.foreach(team => {
               val sprint = new Sprint(config.sprintNumber, team)
@@ -157,7 +159,7 @@ object Main extends App {
                 val doneHoursByType = groupingAlgorithm.groupAndCountHoursByType(groupingAlgorithm.filterDone(list))
                 val workLogByType = groupingAlgorithm.groupAndCountWorkByType(list)
 
-                val map = (formatter.format(config.date) -> DayValue(time, doneHoursByType, workLogByType, projectMap, workLogMap))
+                val map = formatter.format(config.date) -> DayValue(time, doneHoursByType, workLogByType, projectMap, workLogMap)
                 sprint.writeSprint(dto.copy(valuesMap = dto.valuesMap + map))
               }
             })
@@ -165,18 +167,18 @@ object Main extends App {
             println("File not extist!")
           }
 
-        }
-        case "report" => {
+
+        case "report" =>
           if (config.out.isDefined) {
             val html = new Html(config.sprintNumber, config.teams.map(new Sprint(config.sprintNumber, _).readSprint()).toList)
             FileUtils.write(config.out.get, html.getHtml, Charset.defaultCharset)
           }
-        }
-        case _ => {
+
+        case _ =>
           println("No command selected")
-        }
+
       }
-    }
+
 
     case None =>
       println("Fatal error")

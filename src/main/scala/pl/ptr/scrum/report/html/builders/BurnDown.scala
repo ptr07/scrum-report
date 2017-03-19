@@ -27,7 +27,7 @@ import scala.collection.immutable.Map
   * Trend line is generated to predict future velocity.
   * Ideal line is generated to show appropriate ticket burning.
   *
-  * @param report
+  * @param report [[Report]] sprint report data
   */
 private[html] class BurnDown(report: Report) extends Builder(report) {
 
@@ -69,7 +69,7 @@ private[html] class BurnDown(report: Report) extends Builder(report) {
       * @return
       */
     def isNotLastValue(label: String): Boolean =
-      labels.drop(labels.indexOf(label)).find(report.valuesMap.contains).isDefined
+      labels.drop(labels.indexOf(label)).exists(report.valuesMap.contains)
 
 
     /**

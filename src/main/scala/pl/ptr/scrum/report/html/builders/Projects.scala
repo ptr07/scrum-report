@@ -41,7 +41,7 @@ private[html] class Projects(report: Report) extends Builder(report) {
       "projectsNames" -> makeListOfString(projectsNames),
       "projectsValues" -> projectsValues.asJava,
       "doneProjectsValues" -> (doneProjectsValues ++ toDoProjectsValues).asJava,
-      "workLogProjectsValues" -> (workLogProjectsValues).asJava
+      "workLogProjectsValues" -> workLogProjectsValues.asJava
 
     )
 

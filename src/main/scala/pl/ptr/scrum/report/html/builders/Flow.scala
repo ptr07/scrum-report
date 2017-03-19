@@ -36,7 +36,7 @@ private[html] class Flow(report: Report) extends Builder(report) {
     conf.statuses.map(status => {
       val name = status.name
       val color = status.color
-      val values = labels.map(label => report.valuesMap.get(label)).map(_.getOrElse(new DayValue()).hoursByStatus)
+      val values = labels.map(label => report.valuesMap.get(label)).map(_.getOrElse(DayValue()).hoursByStatus)
         .map(m => m.getOrElse(name, 0.0))
       StatusValues(name, color, values)
     })

@@ -15,7 +15,7 @@
 // limitations under the License.
 package pl.ptr.scrum.report.data
 
-import pl.ptr.scrum.report.dto.Types.{Project, ProjectName, StatusName, TypeName}
+import pl.ptr.scrum.report.dto.Types.{ProjectName, StatusName, TypeName}
 import pl.ptr.scrum.report.utils.ConfigurationLoader
 
 import scala.collection.immutable.Map

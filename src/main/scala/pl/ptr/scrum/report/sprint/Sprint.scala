@@ -71,7 +71,7 @@ class Sprint(sprintNumber: Int, team: String) {
   /**
     * Data from each day should be stored in db file. Write method updates sprint data using [[Report]] dto.
     *
-    * @param dto
+    * @param dto report
     */
   def writeSprint(dto: Report): Unit = {
     mapper.writeValue(new File(createDbFile), dto)

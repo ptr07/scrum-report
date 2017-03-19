@@ -27,8 +27,8 @@ import pl.ptr.scrum.report.utils.Implicits._
 
 /**
   * Generated html report using list of [[Report]] data and freemarker templates
-  * @param sprintNumber
-  * @param reports
+  * @param sprintNumber number of sprint
+  * @param reports list of [[Report]] data
   */
 class Html(sprintNumber: Int, reports: List[Report]) {
 
@@ -41,8 +41,8 @@ class Html(sprintNumber: Int, reports: List[Report]) {
     val template = freemarkerConf.getTemplate("template.html")
     val data = scala.collection.mutable.Map[String, Object]()
     data.put("sprintNumber", sprintNumber.toString)
-    data.put("charts", reports.map(getChartHtml(_)).asJava)
-    val sw = new StringWriter();
+    data.put("charts", reports.map(getChartHtml).asJava)
+    val sw = new StringWriter()
     template.process(data.asJava, sw)
     sw.toString
   }
@@ -61,7 +61,7 @@ class Html(sprintNumber: Int, reports: List[Report]) {
     data ++= new Projects(dto).build
 
     data.put("name", dto.team)
-    val sw = new StringWriter();
+    val sw = new StringWriter()
     template.process(data.asJava, sw)
     sw.toString
 
