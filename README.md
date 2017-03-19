@@ -1,5 +1,5 @@
 # scrum-report
-Report tool for scrum teams based on jira task list export.
+Report tool for scrum teams, based on jira task list export.
 
 ### Example report
 
