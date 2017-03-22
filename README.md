@@ -1,4 +1,4 @@
-# scrum-report
+# scrum-report  [![Build Status](https://travis-ci.org/ptr07/scrum-report.svg?branch=master)](https://travis-ci.org/ptr07/scrum-report)
 Report tool for scrum teams, based on jira task list export.
 
 ### Example report
