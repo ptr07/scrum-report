@@ -21,24 +21,25 @@ import java.time.format.DateTimeFormatter
 import freemarker.template.Configuration
 import pl.ptr.scrum.report.dto.Report
 import pl.ptr.scrum.report.html.builders._
+import pl.ptr.scrum.report.utils.Implicits._
 
 import scala.collection.JavaConverters._
-import pl.ptr.scrum.report.utils.Implicits._
 
 /**
   * Generated html report using list of [[Report]] data and freemarker templates
+  *
   * @param sprintNumber number of sprint
-  * @param reports list of [[Report]] data
+  * @param reports      list of [[Report]] data
   */
 class Html(sprintNumber: Int, reports: List[Report]) {
 
   val freemarkerConf = new Configuration
   freemarkerConf.setClassForTemplateLoading(getClass, "templates")
-
+  private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM")
 
   def getHtml: String = {
 
-    val template = freemarkerConf.getTemplate("template.html")
+    val template = freemarkerConf.getTemplate("template.ftl")
     val data = scala.collection.mutable.Map[String, Object]()
     data.put("sprintNumber", sprintNumber.toString)
     data.put("charts", reports.map(getChartHtml).asJava)
@@ -49,11 +50,11 @@ class Html(sprintNumber: Int, reports: List[Report]) {
 
   private def getChartHtml(dto: Report): String = {
 
-    val template = freemarkerConf.getTemplate("chart.html")
+    val template = freemarkerConf.getTemplate("chart.ftl")
     val data = scala.collection.mutable.Map[String, Object]()
     data.put("sprintNumber", sprintNumber.toString)
     data.put("dateFrom", formatter.format(dto.dateFrom))
-    data.put("dateTo",formatter.format(dto.dateTo))
+    data.put("dateTo", formatter.format(dto.dateTo))
     data ++= new BurnDown(dto).build
     data ++= new Flow(dto).build
     data ++= new Pie(dto).build
@@ -66,8 +67,6 @@ class Html(sprintNumber: Int, reports: List[Report]) {
     sw.toString
 
   }
-
-  private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM")
 
 
 }

@@ -16,8 +16,9 @@
 package pl.ptr.scrum.report.data
 
 import java.io.{BufferedInputStream, File, FileInputStream}
-import pl.ptr.scrum.report.utils.TypeMagic._
+
 import org.scalatest.{BeforeAndAfterEach, FlatSpec, Matchers}
+import pl.ptr.scrum.report.utils.TypeMagic._
 
 /**
   * Created by ptr on 11.02.17.
@@ -80,9 +81,7 @@ class ParserSpec extends FlatSpec with Matchers with BeforeAndAfterEach {
     antMap.get("Bug".typeName) should be(6.5)
 
 
-
   }
-
 
 
   var exampleFis: BufferedInputStream = null

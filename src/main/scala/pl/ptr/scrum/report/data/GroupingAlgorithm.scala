@@ -25,6 +25,9 @@ import scala.collection.immutable.Map
   */
 class GroupingAlgorithm {
 
+  private val SecondsInHour = 3600.0
+  private val Conf = ConfigurationLoader.config
+
   /**
     * Tickets are grouped by status. Time logged in 'Buffers' is subtracted from initial status
     * and is added to finish ticket status. Exceeded buffers is not accepted.
@@ -57,6 +60,9 @@ class GroupingAlgorithm {
     tasks.groupBy(task => task.kind).map(kv => (kv._1, count(workLog)(kv._2)))
   }
 
+  private def workLog(task: Task): Long = task.timeSpent
+
+  private def count(valFun: Task => Long)(tasks: List[Task]): Double = Math.round(tasks.map(valFun).sum * 100 / SecondsInHour) / 100.0
 
   /**
     * Tickets are grouped by project and issue type.
@@ -69,6 +75,23 @@ class GroupingAlgorithm {
 
     countBuffersTasks(tasks).groupBy(task => task.project).map(kv => (kv._1, countMap(kv._2.groupBy(_.kind))))
   }
+
+  private def countBuffersTasks(tasks: List[Task]): List[Task] = {
+
+    def splitTask(task: Task): List[Task] = {
+      val tEstimate = task.estimate
+      val tTimeSpend = if (task.timeSpent > tEstimate) tEstimate else task.timeSpent
+      List(task.copy(estimate = tEstimate - tTimeSpend), task.copy(status = Conf.doneStatusName, estimate = tTimeSpend))
+    }
+
+    tasks.flatMap(task => if (task.isBuffer) {
+      splitTask(task)
+    } else {
+      List(task)
+    })
+  }
+
+  private def estimate(task: Task): Long = task.estimate
 
   /**
     * Tickets are grouped by project and issue type.
@@ -84,39 +107,13 @@ class GroupingAlgorithm {
 
   /**
     * Filter tasks that are finished
+    *
     * @param tasks all task from report
     * @return
     */
-  def filterDone(tasks: List[Task]) : List[Task] = {
+  def filterDone(tasks: List[Task]): List[Task] = {
     countBuffersTasks(tasks).filter(_.isFinished)
   }
-
-
-  private def countBuffersTasks(tasks: List[Task]): List[Task] = {
-
-    def splitTask(task: Task): List[Task] = {
-      val tEstimate = task.estimate
-      val tTimeSpend = if (task.timeSpent > tEstimate) tEstimate else task.timeSpent
-      List(task.copy(estimate = tEstimate - tTimeSpend), task.copy(status=Conf.doneStatusName,estimate = tTimeSpend))
-    }
-
-    tasks.flatMap(task => if (task.isBuffer) {
-      splitTask(task)
-    } else {
-      List(task)
-    })
-  }
-
-  private def estimate(task: Task): Long = task.estimate
-
-  private def workLog(task: Task): Long = task.timeSpent
-
-
-  private def count(valFun: Task => Long)(tasks: List[Task]): Double = Math.round(tasks.map(valFun).sum * 100 / SecondsInHour) / 100.0
-
-
-  private val SecondsInHour = 3600.0
-  private val Conf = ConfigurationLoader.config
 
 
 }

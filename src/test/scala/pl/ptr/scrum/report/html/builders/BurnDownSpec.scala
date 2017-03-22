@@ -41,25 +41,25 @@ class BurnDownSpec extends FlatSpec with Matchers {
     val burnDown = new BurnDown(trivialReport)
 
     burnDown.values.length should be(0)
-    burnDown.idealValues.length should be (10)
-    burnDown.trendValues.length should be (10)
+    burnDown.idealValues.length should be(10)
+    burnDown.trendValues.length should be(10)
   }
 
-  val singleReport = trivialReport.copy(valuesMap =   Map("30/01" -> DayValue(Map("To Do".statusName -> 130), Map())))
+  val singleReport = trivialReport.copy(valuesMap = Map("30/01" -> DayValue(Map("To Do".statusName -> 130), Map())))
 
   "it" should "generate single value for single valueMap" in {
     val burnDown = new BurnDown(singleReport)
 
     burnDown.values.length should be(1)
-    burnDown.values.head should be (130)
+    burnDown.values.head should be(130)
   }
 
 
   val withEmptyReport =
     trivialReport.copy(valuesMap =
       Map("30/01" -> DayValue(Map("To Do".statusName -> 130), Map()),
-        "31/01" -> DayValue(Map("To Do".statusName -> 120,"Business done".statusName -> 10), Map()),
-        "02/02" -> DayValue(Map("To Do".statusName -> 100,"Business done".statusName -> 30), Map())
+        "31/01" -> DayValue(Map("To Do".statusName -> 120, "Business done".statusName -> 10), Map()),
+        "02/02" -> DayValue(Map("To Do".statusName -> 100, "Business done".statusName -> 30), Map())
 
       ))
 
@@ -67,10 +67,10 @@ class BurnDownSpec extends FlatSpec with Matchers {
     val burnDown = new BurnDown(withEmptyReport)
 
     burnDown.values.length should be(4)
-    burnDown.values(0) should be (130)
-    burnDown.values(1) should be (120)
-    burnDown.values(2) should be (120)
-    burnDown.values(3) should be (100)
+    burnDown.values(0) should be(130)
+    burnDown.values(1) should be(120)
+    burnDown.values(2) should be(120)
+    burnDown.values(3) should be(100)
   }
 
   behavior of "An IdealLine"
@@ -80,8 +80,8 @@ class BurnDownSpec extends FlatSpec with Matchers {
     val burnDown = new BurnDown(trivialReport)
 
     burnDown.idealValues.length should be(10)
-    burnDown.idealValues(0) should be (130)
-    burnDown.idealValues(9) should be (0)
+    burnDown.idealValues(0) should be(130)
+    burnDown.idealValues(9) should be(0)
 
   }
 
@@ -93,8 +93,8 @@ class BurnDownSpec extends FlatSpec with Matchers {
     val burnDown = new BurnDown(withEmptyReport)
 
     burnDown.trendValues.length should be(10)
-    burnDown.trendValues(0) should be (130)
-    burnDown.trendValues(9) should be (40)
+    burnDown.trendValues(0) should be(130)
+    burnDown.trendValues(9) should be(40)
 
   }
 

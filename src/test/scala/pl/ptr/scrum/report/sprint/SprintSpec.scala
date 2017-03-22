@@ -29,8 +29,8 @@ class SprintSpec extends FlatSpec with Matchers {
   "A Sprint" should "be started" in {
     val sprint = new Sprint(15, "Szopy")
     val createdDto = sprint.startSprint(LocalDate.parse("2017-01-30"),
-      LocalDate.parse("2017-02-10"), Map("Bug".typeName->10.0,"Story".typeName->15.5,"Change Request".typeName->1.02),
-      Map("CAN".projectName->Map("Bug".typeName->10.0,"Story".typeName->15.5,"Change Request".typeName->1.02))
+      LocalDate.parse("2017-02-10"), Map("Bug".typeName -> 10.0, "Story".typeName -> 15.5, "Change Request".typeName -> 1.02),
+      Map("CAN".projectName -> Map("Bug".typeName -> 10.0, "Story".typeName -> 15.5, "Change Request".typeName -> 1.02))
     )
     createdDto should be equals (sprint.readSprint)
   }
@@ -38,8 +38,8 @@ class SprintSpec extends FlatSpec with Matchers {
   "it" should "must write and read data" in {
     val sprint = new Sprint(15, "Szopy")
     val dto = new Report(15, LocalDate.parse("2017-01-30"), LocalDate.parse("2017-02-10"), "Szopy", 120,
-      Map("Bug".typeName->10.0,"Story".typeName->15.5,"Change Request".typeName->1.02),
-      Map("CAN".projectName->Map("Bug".typeName->10.0,"Story".typeName->15.5,"Change Request".typeName->1.02)),
+      Map("Bug".typeName -> 10.0, "Story".typeName -> 15.5, "Change Request".typeName -> 1.02),
+      Map("CAN".projectName -> Map("Bug".typeName -> 10.0, "Story".typeName -> 15.5, "Change Request".typeName -> 1.02)),
       Map("30/01" -> DayValue(Map("Done".statusName -> 120.0), Map()),
         "31/01" -> DayValue(Map("Done".statusName -> 118.0), Map()),
         "01/02" -> DayValue(Map("Done".statusName -> 102.0), Map()), "02/02" -> DayValue(Map("Done".statusName -> 84.0), Map())

@@ -118,6 +118,7 @@ object TypeMagic {
 
   /**
     * Implicit class responsible for conversion from simple String to Tagged one.
+    *
     * @param s string value
     */
   implicit class TaggedString(val s: String) extends AnyVal {

@@ -29,15 +29,12 @@ private[html] abstract class Builder(report: Report) {
 
   private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM")
   protected val conf: ReportConfig = ConfigurationLoader.config
+  protected val labels: List[String] = datesFromTo(report.dateFrom, report.dateTo).map(formatter.format(_))
+  protected val lastLabel: Option[String] = labels.reverse.find(report.valuesMap.contains)
+  protected val labelsRange: List[Int] = List.range(0, labels.size)
 
 
   def build: Map[String, Object]
-
-  protected val labels: List[String] = datesFromTo(report.dateFrom, report.dateTo).map(formatter.format(_))
-
-  protected val lastLabel: Option[String] = labels.reverse.find(report.valuesMap.contains)
-
-  protected val labelsRange: List[Int] = List.range(0, labels.size)
 
   protected def makeListOfString(list: List[Object]): String = list.map("\"" + _ + "\"").mkString(",")
 

@@ -44,28 +44,18 @@ class Sprint(sprintNumber: Int, team: String) {
   mapper.registerModule(DefaultScalaModule)
   mapper.writerWithDefaultPrettyPrinter()
 
-
-  /**
-    * Created db file. Each sprint is stored in ~/.scrum-report directory in individual file.
-    * For example: sprint 10 for team1 will be saved in: ~/.scrum-report/file-team1-sprint-10.db
-    * @return path to sprint db file
-    */
-  private def createDbFile : String = {
-    val path = System.getProperty("user.home") + "/.scrum-report"
-    val dir = new File(path)
-    if (!dir.exists()) {
-      dir.mkdir()
-    }
-    path + s"/file-$team-sprint-$sprintNumber.db"
-
-  }
-
   /**
     * Reads data from db file to [[Report]] dto
+    *
     * @return
     */
   def readSprint(): Report = {
-    mapper.readValue(new File(createDbFile), classOf[Report])
+    val file = new File(createDbFile)
+    if (file.exists()) {
+      mapper.readValue(file, classOf[Report])
+    } else {
+      Report()
+    }
   }
 
   /**
@@ -74,9 +64,11 @@ class Sprint(sprintNumber: Int, team: String) {
     * @param dto report
     */
   def writeSprint(dto: Report): Unit = {
-    mapper.writeValue(new File(createDbFile), dto)
+    val file = new File(createDbFile)
+    if (file.exists()) {
+      mapper.writeValue(new File(createDbFile), dto)
+    }
   }
-
 
   /**
     * Special method used for initializing sprint
@@ -91,6 +83,22 @@ class Sprint(sprintNumber: Int, team: String) {
     val dto = Report(sprintNumber, dateFrom, dateTo, team, taskByTypes.values.sum, taskByTypes, projectsMap, Map())
     mapper.writeValue(new File(createDbFile), dto)
     dto
+  }
+
+  /**
+    * Created db file. Each sprint is stored in ~/.scrum-report directory in individual file.
+    * For example: sprint 10 for team1 will be saved in: ~/.scrum-report/file-team1-sprint-10.db
+    *
+    * @return path to sprint db file
+    */
+  private def createDbFile: String = {
+    val path = System.getProperty("user.home") + "/.scrum-report"
+    val dir = new File(path)
+    if (!dir.exists()) {
+      dir.mkdir()
+    }
+    path + s"/file-$team-sprint-$sprintNumber.db"
+
   }
 
 }

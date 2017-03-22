@@ -39,13 +39,13 @@ case class DayValue(
 
 case class Report(
                    @BeanProperty
-                   sprintNumber: Int,
+                   sprintNumber: Int = -1,
                    @BeanProperty
-                   dateFrom: Date,
+                   dateFrom: Date =  new Date(),
                    @BeanProperty
-                   dateTo: Date,
+                   dateTo: Date =  new Date(),
                    @BeanProperty
-                   team: String,
+                   team: String = "",
                    @BeanProperty
                    totalHours: Double = 0.0,
                    @BeanProperty
@@ -58,14 +58,15 @@ case class Report(
 
 object Types {
 
-  trait Status
   type StatusName = String @@ Status
+  type TypeName = String @@ Status
+  type ProjectName = String @@ Project
+
+  trait Status
 
   trait Type
-  type TypeName = String @@ Status
 
   trait Project
-  type ProjectName = String @@ Project
 
 }
 

@@ -39,15 +39,15 @@ import scala.collection.immutable.Map
   * @param estimate  task estimation in seconds
   * @param timeSpent work time logged for task in seconds
   */
-case class Task(kind: TypeName, summary: String, project: ProjectName, status: StatusName, estimate: Long, timeSpent: Long){
+case class Task(kind: TypeName, summary: String, project: ProjectName, status: StatusName, estimate: Long, timeSpent: Long) {
   private val Conf = ConfigurationLoader.config
 
-  def isFinished: Boolean ={
-    Conf.doneStatus == status
+  def isBuffer: Boolean = {
+    !isFinished && summary.toLowerCase.contains(Conf.bufferSummary)
   }
 
-  def isBuffer: Boolean ={
-    !isFinished && summary.toLowerCase.contains(Conf.bufferSummary)
+  def isFinished: Boolean = {
+    Conf.doneStatus == status
   }
 
 }
@@ -61,11 +61,17 @@ case class Task(kind: TypeName, summary: String, project: ProjectName, status: S
 class Parser() {
 
   /**
+    * Where to start with the data in the file? The fourth row contains ticket information.
+    */
+  private val DataNumber = 4
+
+  /**
     * Read data from xls in InputStream. It validates and parse file.
+    *
     * @param from xls file input stream
     * @return
     */
-   def parseData(from: BufferedInputStream): List[Task] = {
+  def parseData(from: BufferedInputStream): List[Task] = {
 
     val Header = List("Issue Type",
       "Key", "Summary", "Assignee", "Reporter", "Priority", "Status",
@@ -99,7 +105,7 @@ class Parser() {
       def getLong(cellValue: String) = if (StringUtils.isNoneEmpty(cellValue) && isAllDigits(cellValue)) cellValue.toLong else 0L
 
       def getProject(cellValue: String) = {
-        val regex = "([a-zA-Z]+)-[0-9]+"r
+        val regex = "([a-zA-Z]+)-[0-9]+" r
         val result = for (m <- regex.findFirstMatchIn(cellValue)) yield m.group(1)
         result.getOrElse("")
       }
@@ -140,7 +146,7 @@ class Parser() {
       if (wb.getNumberOfSheets > 0) {
         Some(wb.getSheetAt(0))
       } else {
-       None
+        None
       }
     }
 
@@ -153,11 +159,6 @@ class Parser() {
 
 
   }
-
-  /**
-    * Where to start with the data in the file? The fourth row contains ticket information.
-    */
-  private val DataNumber = 4
 
 
 }

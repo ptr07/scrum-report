@@ -25,6 +25,12 @@ import scala.collection.immutable.Map
   */
 private[html] class Round(report: Report) extends Builder(report) {
 
+  private val taskTypesNames: List[TypeName] = conf.types.map(_.name)
+  private val taskTypesColors: List[String] = conf.types.map(_.color)
+  private val taskTypesValues: List[Double] = conf.types.map(tt => report.taskTypes.getOrElse(tt.name, 0.0))
+  private val workLogByType: List[Double] = hours(_.workLogByType)
+  private val doneHoursByType: List[Double] = hours(_.doneHoursByType)
+
   def build: Map[String, Object] = {
     Map(
       "taskTypesNames" -> makeListOfString(taskTypesNames),
@@ -36,18 +42,6 @@ private[html] class Round(report: Report) extends Builder(report) {
     )
 
   }
-
-
-  private val taskTypesNames: List[TypeName] = conf.types.map(_.name)
-
-  private val taskTypesColors: List[String] = conf.types.map(_.color)
-
-  private val taskTypesValues: List[Double] = conf.types.map(tt => report.taskTypes.getOrElse(tt.name, 0.0))
-
-  private val workLogByType: List[Double] = hours(_.workLogByType)
-
-  private val doneHoursByType: List[Double] = hours(_.doneHoursByType)
-
 
   private def hours(valueFunc: DayValue => Map[TypeName, Double]): List[Double] = {
     val lastLabel = labels.reverse.find(report.valuesMap.contains)

@@ -29,13 +29,13 @@ class BuilderSpec extends FlatSpec with Matchers {
 
   behavior of "An Builder chart generator"
 
-  private class MockBuilder(report: Report) extends Builder(report) {
-    def build(): Map[String, Object] = Map()
-
-    def publicLabels: List[String] = labels
-
-    def publicLastLabel: Option[String] = lastLabel
-  }
+  val trivialReport = Report(15, LocalDate.parse("2017-01-30"), LocalDate.parse("2017-02-10"),
+    "test",
+    130,
+    Map("Bug".typeName -> 120, "Story".typeName -> 10),
+    Map("CM".projectName -> Map("Bug".typeName -> 120, "Story".typeName -> 10)),
+    Map()
+  )
 
 
   "Label generated for report" should " ignore weekends and count every other day" in {
@@ -57,15 +57,6 @@ class BuilderSpec extends FlatSpec with Matchers {
     builder.publicLastLabel should be(Some("06/02"))
 
   }
-
-  val trivialReport = Report(15, LocalDate.parse("2017-01-30"), LocalDate.parse("2017-02-10"),
-    "test",
-    130,
-    Map("Bug".typeName -> 120, "Story".typeName -> 10),
-    Map("CM".projectName -> Map("Bug".typeName -> 120, "Story".typeName -> 10)),
-    Map()
-  )
-
   val report = new Report(15, LocalDate.parse("2017-01-30"), LocalDate.parse("2017-02-10"),
     "test",
     120,
@@ -76,6 +67,14 @@ class BuilderSpec extends FlatSpec with Matchers {
       "01/02" -> DayValue(Map("Done".statusName -> 102), Map()), "02/02" -> DayValue(Map("Done".statusName -> 84), Map())
       , "03/02" -> DayValue(Map("Done".statusName -> 87), Map()), "06/02" -> DayValue(Map("Done".statusName -> 45), Map()))
   )
+
+  private class MockBuilder(report: Report) extends Builder(report) {
+    def build(): Map[String, Object] = Map()
+
+    def publicLabels: List[String] = labels
+
+    def publicLastLabel: Option[String] = lastLabel
+  }
 
 
 }

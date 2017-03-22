@@ -36,45 +36,11 @@ private[html] case class Project(@BeanProperty kind: TypeName,
   */
 private[html] class Projects(report: Report) extends Builder(report) {
 
-  def build: Map[String, Object] = {
-    Map(
-      "projectsNames" -> makeListOfString(projectsNames),
-      "projectsValues" -> projectsValues.asJava,
-      "doneProjectsValues" -> (doneProjectsValues ++ toDoProjectsValues).asJava,
-      "workLogProjectsValues" -> workLogProjectsValues.asJava
-
-    )
-
-  }
-
   private val projectsNames: List[ProjectName] = {
     report.projectsMap.keys.toList.sortWith(_ < _)
   }
-
-
   private val doneProjectsValues: List[Project] = hours(_.projectsMap)
-
   private val workLogProjectsValues: List[Project] = hours(_.workLogMap)
-
-
-  private def hours(valueFunc: DayValue => Map[ProjectName, Map[TypeName, Double]]): List[Project] = {
-
-    if (lastLabel.isDefined && report.valuesMap.contains(lastLabel.get)) {
-      conf.types.map(taskType => {
-        val name = taskType.name
-        val color = taskType.color
-        val values = projectsNames.map(name => {
-          val dayValue = report.valuesMap(lastLabel.get)
-          valueFunc(dayValue).getOrElse(name.projectName, Map())
-        }).map(_.getOrElse(name, 0.0))
-        Project(name, color, values)
-      })
-    } else {
-      List()
-    }
-  }
-
-
   private val toDoProjectsValues: List[Project] = {
 
     if (lastLabel.isDefined && report.valuesMap.contains(lastLabel.get)) {
@@ -93,7 +59,6 @@ private[html] class Projects(report: Report) extends Builder(report) {
       List()
     }
   }
-
   private val projectsValues: List[Project] = {
     conf.types.map(taskType => {
       val name = taskType.name
@@ -101,5 +66,33 @@ private[html] class Projects(report: Report) extends Builder(report) {
       val values = projectsNames.map(name => report.projectsMap.getOrElse(name.projectName, Map())).map(_.getOrElse(name, 0.0))
       Project(name, color, values)
     })
+  }
+
+  def build: Map[String, Object] = {
+    Map(
+      "projectsNames" -> makeListOfString(projectsNames),
+      "projectsValues" -> projectsValues.asJava,
+      "doneProjectsValues" -> (doneProjectsValues ++ toDoProjectsValues).asJava,
+      "workLogProjectsValues" -> workLogProjectsValues.asJava
+
+    )
+
+  }
+
+  private def hours(valueFunc: DayValue => Map[ProjectName, Map[TypeName, Double]]): List[Project] = {
+
+    if (lastLabel.isDefined && report.valuesMap.contains(lastLabel.get)) {
+      conf.types.map(taskType => {
+        val name = taskType.name
+        val color = taskType.color
+        val values = projectsNames.map(name => {
+          val dayValue = report.valuesMap(lastLabel.get)
+          valueFunc(dayValue).getOrElse(name.projectName, Map())
+        }).map(_.getOrElse(name, 0.0))
+        Project(name, color, values)
+      })
+    } else {
+      List()
+    }
   }
 }

@@ -25,6 +25,9 @@ import scala.collection.immutable.Map
   */
 private[html] class Pie(report: Report) extends Builder(report) {
 
+  val taskTypesColors: List[String] = conf.types.map(_.color)
+  private val hoursByStatus: List[Double] = hours(_.hoursByStatus)
+
   def build: Map[String, Object] = {
     Map(
       "labels" -> makeListOfString(labels),
@@ -35,12 +38,6 @@ private[html] class Pie(report: Report) extends Builder(report) {
     )
 
   }
-
-
-  val taskTypesColors: List[String] = conf.types.map(_.color)
-
-  private val hoursByStatus: List[Double] = hours(_.hoursByStatus)
-
 
   private def hours(valueFunc: DayValue => Map[StatusName, Double]): List[Double] = {
     val lastLabel = labels.reverse.find(report.valuesMap.contains)

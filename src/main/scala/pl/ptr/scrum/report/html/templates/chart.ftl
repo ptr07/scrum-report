@@ -3,17 +3,17 @@
         <h4>Sprint ${sprintNumber} (${dateFrom}-${dateTo}), ${name} </h4>
     </div>
 
-    <#include "burndown.html">
-    <#include "flow.html">
-    <#include "pie.html">
+    <#include "burndown.ftl">
+    <#include "flow.ftl">
+    <#include "pie.ftl">
 
     <div style="clear:both"></div>
-    <#include "round.html">
+    <#include "round.ftl">
     <div style="clear:both"></div>
 
-    <#include "start.html">
-    <#include "done.html">
-    <#include "worklog.html">
+    <#include "start.ftl">
+    <#include "done.ftl">
+    <#include "worklog.ftl">
 
 
 </div>

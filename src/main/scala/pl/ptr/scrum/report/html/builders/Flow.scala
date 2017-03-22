@@ -24,14 +24,6 @@ import scala.collection.immutable.Map
 
 
 private[html] class Flow(report: Report) extends Builder(report) {
-  def build: Map[String, Object] = {
-    Map(
-      "labels" -> makeListOfString(labels),
-      "statusValues" -> statusValues.asJava
-    )
-  }
-
-
   private val statusValues: List[StatusValues] = {
     conf.statuses.map(status => {
       val name = status.name
@@ -40,6 +32,13 @@ private[html] class Flow(report: Report) extends Builder(report) {
         .map(m => m.getOrElse(name, 0.0))
       StatusValues(name, color, values)
     })
+  }
+
+  def build: Map[String, Object] = {
+    Map(
+      "labels" -> makeListOfString(labels),
+      "statusValues" -> statusValues.asJava
+    )
   }
 }
 

@@ -31,16 +31,6 @@ import scala.collection.immutable.Map
   */
 private[html] class BurnDown(report: Report) extends Builder(report) {
 
-  def build: Map[String, Object] = {
-    Map(
-      "labels" -> makeListOfString(labels),
-      "values" -> makeListOfValues(values),
-      "idealValues" -> makeListOfValues(idealValues),
-      "trendValues" -> makeListOfValues(trendValues)
-    )
-  }
-
-
   /**
     * For each day in Sprint, it subtract number of done hours from total hours.
     * Holes in data is filled by previous values.
@@ -96,8 +86,6 @@ private[html] class BurnDown(report: Report) extends Builder(report) {
     }
 
   }
-
-
   /**
     * Ideal line - line connecting beginning of sprint (total hours) with sprint end (0 hours)
     */
@@ -111,7 +99,6 @@ private[html] class BurnDown(report: Report) extends Builder(report) {
       xx.map(x => y(x))
     }
   }
-
   private val trendFunction: (Double) => Double = { (x: Double) => {
     val valuesWithIndex = values.zipWithIndex
     val cutted = if (valuesWithIndex.length > 3 && valuesWithIndex.length < labels.size) {
@@ -130,7 +117,6 @@ private[html] class BurnDown(report: Report) extends Builder(report) {
 
   }
   }
-
   /**
     * Simple trend line based on values from last three days.
     */
@@ -143,6 +129,14 @@ private[html] class BurnDown(report: Report) extends Builder(report) {
     }
   }
 
+  def build: Map[String, Object] = {
+    Map(
+      "labels" -> makeListOfString(labels),
+      "values" -> makeListOfValues(values),
+      "idealValues" -> makeListOfValues(idealValues),
+      "trendValues" -> makeListOfValues(trendValues)
+    )
+  }
 
   private def getFunction(x1: Double, y1: Double, x2: Double, y2: Double): (Double) => Double = (x: Double) => {
     (y1 + ((y2 - y1) / (x2 - x1)) * (x - x1)).toInt

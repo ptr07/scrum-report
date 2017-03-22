@@ -42,3 +42,6 @@ libraryDependencies += "org.scalamock" %% "scalamock-scalatest-support" % "3.5.0
 
 assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
 
+
+clippyColorsEnabled := true
+
