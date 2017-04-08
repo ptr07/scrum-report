@@ -1,4 +1,4 @@
-<div class="panel panel-default" style="padding:20px; height: 1350px; margin: auto;">
+<div class="panel panel-default" style="padding:20px; overflow: auto; margin: auto;">
     <div class="page-header">
         <h4>Sprint ${sprintNumber} (${dateFrom}-${dateTo}), ${name} </h4>
     </div>
@@ -18,5 +18,5 @@
 
 </div>
 
-<div style="margin: 20px;"></div>
+<div style="margin: 20px; clear: both;"></div>
 
