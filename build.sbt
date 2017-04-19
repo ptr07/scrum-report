@@ -1,6 +1,6 @@
 name := "scrum-report"
 version := "0.1"
-scalaVersion := "2.12.1"
+scalaVersion := "2.12.2"
 assemblyJarName in assembly := "scrum-report.jar"
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
@@ -34,8 +34,9 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 libraryDependencies += "org.apache.commons" % "commons-math3" % "3.2"
 libraryDependencies += "com.typesafe" % "config" % "1.3.1"
 libraryDependencies += "com.github.melrief" %% "pureconfig" % "0.5.1"
+libraryDependencies += "de.jollyday" % "jollyday" % "0.5.2"
 libraryDependencies += "org.scalamock" %% "scalamock-scalatest-support" % "3.5.0" % Test
-
+libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.13.4" % Test
 
 //import sbtassembly.AssemblyPlugin.defaultShellScript
 //assemblyOption in assembly := (assemblyOption in assembly).value.copy(prependShellScript = Some(defaultShellScript))
