@@ -18,14 +18,22 @@ package pl.ptr.scrum.report.html.builders
 import java.time.format.DateTimeFormatter
 import java.time.{DayOfWeek, LocalDate}
 
+import de.jollyday.{HolidayCalendar, HolidayManager, ManagerParameters}
 import pl.ptr.scrum.report.dto.Report
 import pl.ptr.scrum.report.utils.Implicits._
 import pl.ptr.scrum.report.utils.{ConfigurationLoader, ReportConfig}
+
+import scala.annotation.tailrec
+
+object Holiday {
+  val holidayManager = HolidayManager.getInstance(ManagerParameters.create(HolidayCalendar.POLAND))
+}
 
 /**
   * Created by ptr on 02.03.17.
   */
 private[html] abstract class Builder(report: Report) {
+
 
   private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM")
   protected val conf: ReportConfig = ConfigurationLoader.config
@@ -41,18 +49,25 @@ private[html] abstract class Builder(report: Report) {
   protected def makeListOfValues(list: List[Double]): String = list.mkString(",")
 
 
-  private def datesFromTo(dateFrom: LocalDate, dateTo: LocalDate): List[LocalDate] = {
+  private[html] def datesFromTo(dateFrom: LocalDate, dateTo: LocalDate): List[LocalDate] = {
     def isWeekend(dateFrom: LocalDate) = dateFrom.getDayOfWeek == DayOfWeek.SATURDAY || dateFrom.getDayOfWeek == DayOfWeek.SUNDAY
 
-    if (dateFrom.isAfter(dateTo)) {
-      List()
-    } else {
-      if (isWeekend(dateFrom)) {
-        datesFromTo(dateFrom.plusDays(1), dateTo)
+    def isHoliday(dateFrom: LocalDate) = Holiday.holidayManager.isHoliday(dateFrom)
+
+    @tailrec
+    def datesFromToRec(dateFrom: LocalDate, dateTo: LocalDate, acu: List[LocalDate]): List[LocalDate] = {
+
+      if (dateFrom.isAfter(dateTo)) {
+        acu
+      } else if (isWeekend(dateFrom) || isHoliday(dateFrom)) {
+        datesFromToRec(dateFrom.plusDays(1), dateTo, acu)
       } else {
-        List(dateFrom) ++ datesFromTo(dateFrom.plusDays(1), dateTo)
+        datesFromToRec(dateFrom.plusDays(1), dateTo, acu ++ List(dateFrom))
       }
     }
+
+    datesFromToRec(dateFrom, dateTo, List())
+
   }
 
 

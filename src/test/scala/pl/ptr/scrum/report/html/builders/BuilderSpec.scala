@@ -57,6 +57,24 @@ class BuilderSpec extends FlatSpec with Matchers {
     builder.publicLastLabel should be(Some("06/02"))
 
   }
+
+  val holiday = Report(15, LocalDate.parse("2017-05-01"), LocalDate.parse("2017-05-10"),
+    "test",
+    130,
+    Map(),
+    Map(),
+    Map()
+  )
+
+  "Label generated for holiday report" should " ignore weekends and holidays and count every other day" in {
+    val builder = new MockBuilder(holiday)
+
+    builder.publicLabels should have size (6)
+    builder.publicLabels(0) should be("02/05")
+    builder.publicLabels(5) should be("10/05")
+
+  }
+
   val report = new Report(15, LocalDate.parse("2017-01-30"), LocalDate.parse("2017-02-10"),
     "test",
     120,
