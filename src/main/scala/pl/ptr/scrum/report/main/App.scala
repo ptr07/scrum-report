@@ -153,14 +153,17 @@ object Main extends App {
               } {
                 val list = xlsParser.parseData(fis)
                 val time = groupingAlgorithm.groupAndCountByStatus(list)
-                val projectMap = groupingAlgorithm.groupAndCountHoursByProjectAndType(groupingAlgorithm.filterDone(list))
+
+                val projectMap = groupingAlgorithm.groupAndCountHoursByProjectAndType(list)
+
+                val doneProjectMap = groupingAlgorithm.groupAndCountHoursByProjectAndType(groupingAlgorithm.filterDone(list))
                 val workLogMap = groupingAlgorithm.groupAndCountWorkByProjectAndType(list)
 
                 val doneHoursByType = groupingAlgorithm.groupAndCountHoursByType(groupingAlgorithm.filterDone(list))
                 val workLogByType = groupingAlgorithm.groupAndCountWorkByType(list)
 
-                val map = formatter.format(config.date) -> DayValue(time, doneHoursByType, workLogByType, projectMap, workLogMap)
-                sprint.writeSprint(dto.copy(valuesMap = dto.valuesMap + map))
+                val map = formatter.format(config.date) -> DayValue(time, doneHoursByType, workLogByType, doneProjectMap, workLogMap)
+                sprint.writeSprint(dto.copy(valuesMap = dto.valuesMap + map,projectsMap = projectMap))
               }
             })
           } else {
